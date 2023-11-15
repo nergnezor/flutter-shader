@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -23,11 +25,49 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: const Text('Simple Shader Demo'),
+  //     ),
+  //     body: ShaderBuilder(
+  //       assetKey: 'shaders/simple.frag',
+  //       (context, shader, child) => CustomPaint(
+  //         size: MediaQuery.of(context).size,
+  //         painter: ShaderPainter(
+  //           shader: shader,
+  //         ),
+  //       ),
+  //       child: const Center(
+  //         child: CircularProgressIndicator(),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MyHomePageState();
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  // Start timer when the widget is first built
+  late Timer timer;
+  double time = 0;
 
   @override
   Widget build(BuildContext context) {
+    const refreshRate = 60;
+    const delay = 1000 ~/ refreshRate;
+    timer = Timer.periodic(const Duration(milliseconds: delay), (timer) {
+      time += delay;
+      setState(() {});
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Simple Shader Demo'),
@@ -36,9 +76,7 @@ class MyHomePage extends StatelessWidget {
         assetKey: 'shaders/simple.frag',
         (context, shader, child) => CustomPaint(
           size: MediaQuery.of(context).size,
-          painter: ShaderPainter(
-            shader: shader,
-          ),
+          painter: ShaderPainter(shader, time),
         ),
         child: const Center(
           child: CircularProgressIndicator(),
@@ -49,13 +87,17 @@ class MyHomePage extends StatelessWidget {
 }
 
 class ShaderPainter extends CustomPainter {
-  ShaderPainter({required this.shader});
+  ShaderPainter(this.shader, this.time);
   ui.FragmentShader shader;
+  double time;
 
   @override
   void paint(Canvas canvas, Size size) {
     shader.setFloat(0, size.width);
     shader.setFloat(1, size.height);
+    // final time = DateTime.now().millisecondsSinceEpoch / 1000;
+    // print(sin(time));
+    shader.setFloat(2, time);
 
     final paint = Paint()..shader = shader;
     canvas.drawRect(
@@ -66,6 +108,6 @@ class ShaderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+    return true;
   }
 }

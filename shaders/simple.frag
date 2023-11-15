@@ -5,8 +5,8 @@
 precision mediump float;
 
 uniform vec2 resolution;
-uniform vec2 mouse;
 uniform float time;
+uniform vec2 mouse;
 out vec4 fragColor;
 
 vec3 flutterBlue = vec3(5, 83, 177) / 255;
@@ -20,11 +20,11 @@ void main() {
 
   float center_dist = distance(uv, center);
   // float angle = atan(st.y, st.x);
-  const float RADIUS = .1;
+  const float RADIUS = .12 + 0.02*sin(time/1000000 );
   // float r = RADIUS + 0.1 * sin(10.0 * angle + time * 2.0);
   // float alpha = smoothstep(r, r + 0.01, center_dist);
 float alpha = center_dist < RADIUS ? 1.0 : 0.0;
-  fragColor = vec4(alpha, alpha, alpha, 1.0);
+  fragColor = vec4(alpha, sin(time/10000000), alpha, 1.0);
 
 
 }
