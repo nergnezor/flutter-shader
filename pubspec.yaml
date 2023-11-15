@@ -11,12 +11,6 @@ dependencies:
     sdk: flutter
   flutter_shaders: ^0.1.0
 
-dev_dependencies:
-  analysis_defaults:
-    path: ../analysis_defaults
-  flutter_test:
-    sdk: flutter
-
 flutter:
   uses-material-design: true
   shaders:
