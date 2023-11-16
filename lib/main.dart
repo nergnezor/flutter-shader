@@ -63,10 +63,6 @@ class Shader extends Game {
       ..setFloat(2, time);
 
     canvas
-      ..translate(size.x, size.y)
-      ..rotate(180 * degrees2Radians)
-      ..translate(size.x, 0)
-      ..scale(-1, 1)
       ..drawRect(
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
