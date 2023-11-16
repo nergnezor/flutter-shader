@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -39,11 +41,18 @@ class _ShaderPageState extends State<ShaderPage> {
   }
 }
 
-class Shader extends Game {
+class Shader extends Game with TapDetector {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
   double time = 0;
+  Vector2 mouse = Vector2.zero();
+
+  // Get pointer input
+  @override
+  void onTapDown(TapDownInfo info) {
+    mouse = info.eventPosition.widget;
+  }
 
   void dispose() {
     shader.dispose();
@@ -63,6 +72,7 @@ class Shader extends Game {
       ..setFloat(2, time);
 
     canvas
+      ..translate(mouse.x, mouse.y)
       ..drawRect(
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
