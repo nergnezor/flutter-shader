@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const refreshRate = 60;
     const delay = 1000 ~/ refreshRate;
     timer = Timer.periodic(const Duration(milliseconds: delay), (timer) {
-      time += delay;
+      time += delay / 1000.0;
       setState(() {});
     });
     return Scaffold(
@@ -108,6 +108,9 @@ class ShaderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    if (oldDelegate is ShaderPainter) {
+      return oldDelegate.shader != shader || oldDelegate.time != time;
+    }
+    return false;
   }
 }
