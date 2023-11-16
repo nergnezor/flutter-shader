@@ -1,8 +1,6 @@
-import 'dart:async';
-import 'dart:ui';
-
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_shader/ball.dart';
 
 void main() {
   runApp(
@@ -24,7 +22,7 @@ class _ShaderPageState extends State<ShaderPage> {
 
   @override
   void dispose() {
-    game.dispose();
+    // game.dispose();
     super.dispose();
   }
 
@@ -40,37 +38,27 @@ class _ShaderPageState extends State<ShaderPage> {
 }
 
 class Shader extends Game {
-  late final FragmentProgram _program;
-  late final FragmentShader shader;
+  late final Ball ball;
 
   double time = 0;
-
-  void dispose() {
-    shader.dispose();
-  }
-
-  @override
-  Future<void>? onLoad() async {
-    _program = await FragmentProgram.fromAsset('shaders/simple.frag');
-    shader = _program.fragmentShader();
-  }
-
-  @override
-  void render(Canvas canvas) {
-    shader
-      ..setFloat(0, size.x)
-      ..setFloat(1, size.y)
-      ..setFloat(2, time);
-
-    canvas
-      ..drawRect(
-        Offset.zero & size.toSize(),
-        Paint()..shader = shader,
-      );
-  }
 
   @override
   void update(double dt) {
     time += dt;
+    ball.time = time;
+    ball.update(dt);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // TODO: implement render
+    ball.render(canvas);
+    canvas.restore();
+  }
+
+  @override
+  Future<void> onLoad() async {
+    ball = Ball();
+    await ball.onLoad();
   }
 }
