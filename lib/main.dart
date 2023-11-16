@@ -1,116 +1,80 @@
 import 'dart:async';
-import 'dart:math';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_shaders/flutter_shaders.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MaterialApp(
+      home: const ShaderPage(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ShaderPage extends StatefulWidget {
+  const ShaderPage({super.key});
+
+  @override
+  State<ShaderPage> createState() => _ShaderPageState();
+}
+
+class _ShaderPageState extends State<ShaderPage> {
+  final game = Shader();
+
+  @override
+  void dispose() {
+    game.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Simple Shader Demo',
-      theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: const Text('Simple Shader Demo'),
-  //     ),
-  //     body: ShaderBuilder(
-  //       assetKey: 'shaders/simple.frag',
-  //       (context, shader, child) => CustomPaint(
-  //         size: MediaQuery.of(context).size,
-  //         painter: ShaderPainter(
-  //           shader: shader,
-  //         ),
-  //       ),
-  //       child: const Center(
-  //         child: CircularProgressIndicator(),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  @override
-  State<StatefulWidget> createState() {
-    return _MyHomePageState();
-  }
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  // Start timer when the widget is first built
-  late Timer timer;
-  double time = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    const refreshRate = 60;
-    const delay = 1000 ~/ refreshRate;
-    timer = Timer.periodic(const Duration(milliseconds: delay), (timer) {
-      time += delay / 1000.0;
-      setState(() {});
-    });
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Simple Shader Demo'),
+        title: const Text('Shader'),
       ),
-      body: ShaderBuilder(
-        assetKey: 'shaders/simple.frag',
-        (context, shader, child) => CustomPaint(
-          size: MediaQuery.of(context).size,
-          painter: ShaderPainter(shader, time),
-        ),
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+      body: GameWidget(game: game),
     );
   }
 }
 
-class ShaderPainter extends CustomPainter {
-  ShaderPainter(this.shader, this.time);
-  ui.FragmentShader shader;
-  double time;
+class Shader extends Game {
+  late final FragmentProgram _program;
+  late final FragmentShader shader;
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    shader.setFloat(0, size.width);
-    shader.setFloat(1, size.height);
-    // final time = DateTime.now().millisecondsSinceEpoch / 1000;
-    // print(sin(time));
-    shader.setFloat(2, time);
+  double time = 0;
 
-    final paint = Paint()..shader = shader;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      paint,
-    );
+  void dispose() {
+    shader.dispose();
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    if (oldDelegate is ShaderPainter) {
-      return oldDelegate.shader != shader || oldDelegate.time != time;
-    }
-    return false;
+  Future<void>? onLoad() async {
+    _program = await FragmentProgram.fromAsset('shaders/simple.frag');
+    shader = _program.fragmentShader();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    shader
+      ..setFloat(0, size.x)
+      ..setFloat(1, size.y)
+      ..setFloat(2, time);
+
+    canvas
+      ..translate(size.x, size.y)
+      ..rotate(180 * degrees2Radians)
+      ..translate(size.x, 0)
+      ..scale(-1, 1)
+      ..drawRect(
+        Offset.zero & size.toSize(),
+        Paint()..shader = shader,
+      );
+  }
+
+  @override
+  void update(double dt) {
+    time += dt;
   }
 }
