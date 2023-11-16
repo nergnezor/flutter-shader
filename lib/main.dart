@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -41,17 +42,24 @@ class _ShaderPageState extends State<ShaderPage> {
   }
 }
 
-class Shader extends Game with TapDetector {
+class Shader extends FlameGame with DragCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
+  late final Player player;
 
   double time = 0;
   Vector2 mouse = Vector2.zero();
 
-  // Get pointer input
   @override
-  void onTapDown(TapDownInfo info) {
-    mouse = info.eventPosition.widget;
+  void onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    mouse.setFrom(event.localPosition);
+    print('onDragStart: ${event.localPosition}');
+  }
+
+  @override
+  bool containsLocalPoint(Vector2 localPoint) {
+    return true;
   }
 
   void dispose() {
@@ -62,17 +70,20 @@ class Shader extends Game with TapDetector {
   Future<void>? onLoad() async {
     _program = await FragmentProgram.fromAsset('shaders/simple.frag');
     shader = _program.fragmentShader();
+    player = Player(Vector2.all(100), Vector2.all(300));
+    add(player);
   }
 
   @override
   void render(Canvas canvas) {
+    player.render(canvas);
     shader
       ..setFloat(0, size.x)
       ..setFloat(1, size.y)
       ..setFloat(2, time);
 
     canvas
-      ..translate(mouse.x, mouse.y)
+      ..translate(player.position.x, player.position.y)
       ..drawRect(
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
@@ -82,5 +93,33 @@ class Shader extends Game with TapDetector {
   @override
   void update(double dt) {
     time += dt;
+  }
+}
+
+class Player extends PositionComponent with DragCallbacks {
+  Player(Vector2 position, Vector2 size)
+      : super(position: position, size: size);
+
+  @override
+  void onDragUpdate(DragUpdateEvent event) {
+    // super.onDragUpdate(event);
+    position.add(event.delta);
+    // update(dt);
+    print('onDragUpdate: ${event.delta}');
+  }
+
+  @override
+  void render(Canvas canvas) {
+    canvas.drawRect(position & size, Paint()..color = const Color(0xFF00FF00));
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+  }
+
+  @override
+  bool containsLocalPoint(Vector2 localPoint) {
+    return true;
   }
 }
