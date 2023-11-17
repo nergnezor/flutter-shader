@@ -22,7 +22,7 @@ jobs:
           channel: 'beta'
       - run: flutter pub get
       - run: flutter create --platforms web .
-      - run: flutter build web --release --web-renderer=canvaskit --base-href /flutter-shader/
+      - run: flutter build web --release --web-renderer=canvaskit --base-href /shadergame/
       
       - name: Setup Pages
         uses: actions/configure-pages@v3
