@@ -60,7 +60,7 @@ class Shader extends Game with TapDetector {
 
   @override
   Future<void>? onLoad() async {
-    _program = await FragmentProgram.fromAsset('shaders/simple.frag');
+    _program = await FragmentProgram.fromAsset('shaders/shader.glsl');
     shader = _program.fragmentShader();
   }
 
@@ -72,7 +72,7 @@ class Shader extends Game with TapDetector {
       ..setFloat(2, time);
 
     canvas
-      ..translate(mouse.x, mouse.y)
+      ..translate(mouse.x - size.x / 2, mouse.y - size.y / 2)
       ..drawRect(
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
