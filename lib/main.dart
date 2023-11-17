@@ -59,14 +59,14 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   void onDragUpdate(int pointerId, DragUpdateInfo info) {
     mouse = info.eventPosition.widget;
   }
-  
+
   void dispose() {
     shader.dispose();
   }
 
   @override
   Future<void>? onLoad() async {
-    _program = await FragmentProgram.fromAsset('shaders/shader.glsl');
+    _program = await FragmentProgram.fromAsset('shaders/shader.frag');
     shader = _program.fragmentShader();
   }
 

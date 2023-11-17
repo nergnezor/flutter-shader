@@ -15,4 +15,4 @@ dependencies:
 flutter:
   uses-material-design: true
   shaders:
-    - shaders/shader.glsl
+    - shaders/shader.frag
