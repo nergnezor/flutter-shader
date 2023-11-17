@@ -41,7 +41,7 @@ class _ShaderPageState extends State<ShaderPage> {
   }
 }
 
-class Shader extends Game with MouseMovementDetector {
+class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
@@ -53,6 +53,13 @@ class Shader extends Game with MouseMovementDetector {
   void onMouseMove(PointerHoverInfo info) {
     mouse = info.eventPosition.widget;
   }
+
+  // Get touch input
+  @override
+  void onDragUpdate(int pointerId, DragUpdateInfo info) {
+    mouse = info.eventPosition.widget;
+  }
+  
   void dispose() {
     shader.dispose();
   }

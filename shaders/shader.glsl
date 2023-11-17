@@ -8,7 +8,7 @@ void main()
 {
   vec2 center = resolution.xy / 2.0;
   float center_distance = distance(FlutterFragCoord().xy, center);
-  const float RADIUS = 100 * (1 + cos(time*3)/8);
+  const float RADIUS = 100 * (1 + cos(time*10)/8);
   float alpha = center_distance < RADIUS ? 1.0 : 0.0;
   fragColor = vec4(alpha);
 }
