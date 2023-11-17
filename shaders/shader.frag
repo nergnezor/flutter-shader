@@ -4,11 +4,16 @@ uniform vec2 resolution;
 uniform float time;
 out vec4 fragColor;
 
+const float RADIUS = 100;
 void main()
 {
-  vec2 center = resolution.xy / 2.0;
+  vec2 center = resolution.xy / 2;
   float center_distance = distance(FlutterFragCoord().xy, center);
-  const float RADIUS = 110 * (1 + cos(time*10)/8);
-  float alpha = center_distance < RADIUS ? 1.0 : 0.0;
-  fragColor = vec4(alpha);
+  float extra =  cos(time*10)/8;
+  const float r = RADIUS * (1 + extra);
+  if (center_distance > r) return;
+
+  
+  float alpha = pow(center_distance/RADIUS,2);
+  fragColor = vec4(0.1+extra,alpha,0.4+pow(extra,4),1);
 }
