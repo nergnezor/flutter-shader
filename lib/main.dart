@@ -41,7 +41,7 @@ class _ShaderPageState extends State<ShaderPage> {
   }
 }
 
-class Shader extends Game with TapDetector {
+class Shader extends Game with MouseMovementDetector {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
@@ -50,11 +50,9 @@ class Shader extends Game with TapDetector {
 
   // Get pointer input
   @override
-  void onTapDown(TapDownInfo info) {
-    time = 0;
+  void onMouseMove(PointerHoverInfo info) {
     mouse = info.eventPosition.widget;
   }
-
   void dispose() {
     shader.dispose();
   }
