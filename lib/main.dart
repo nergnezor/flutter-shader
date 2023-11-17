@@ -51,6 +51,7 @@ class Shader extends Game with TapDetector {
   // Get pointer input
   @override
   void onTapDown(TapDownInfo info) {
+    time = 0;
     mouse = info.eventPosition.widget;
   }
 
