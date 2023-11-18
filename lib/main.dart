@@ -64,7 +64,7 @@ class Shader extends FlameGame
 
   void updateMousePosition(Vector2 position) {
     move = position - pos.position;
-    time = 0;
+    // time = 0;
     speed = Vector2.zero();
   }
 
