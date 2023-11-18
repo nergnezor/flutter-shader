@@ -115,6 +115,13 @@ class Shader extends FlameGame
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
       );
+    shader..setFloat(3, radius * 0.5);
+    canvas
+      ..translate(circle.x + 200, circle.y)
+      ..drawRect(
+        Offset.zero & size.toSize(),
+        Paint()..shader = shader,
+      );
   }
 
   @override

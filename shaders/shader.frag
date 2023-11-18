@@ -18,7 +18,7 @@ void main()
     const float velocity = length(speed);
     const float value = sqrt(velocity) / 4;
     if (center_distance < radius + value)
-      fragColor = vec4(value, value, 0, 0.8);
+      fragColor = vec4(value / 2, value / 4, value / 8, 1);
     return;
   }
   float red = pow(7 * sin(time) / 8, 2);
