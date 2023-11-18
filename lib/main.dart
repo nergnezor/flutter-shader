@@ -54,13 +54,18 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   // Get pointer input
   @override
   void onMouseMove(PointerHoverInfo info) {
-    mouse = info.eventPosition.widget;
+    updateMousePosition(info.eventPosition.widget);
+  }
+
+  void updateMousePosition(Vector2 position) {
+    mouse = position;
+    time = 0;
   }
 
   // Get touch input
   @override
   void onDragUpdate(int pointerId, DragUpdateInfo info) {
-    mouse = info.eventPosition.widget;
+    updateMousePosition(info.eventPosition.widget);
   }
 
   void dispose() {
@@ -95,8 +100,7 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
 
   @override
   void update(double dt) {
+    radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
     time += dt;
-    // float extra =  pow(7*cos(time)/8,2);
-    radius = 100 + 50 * (1 + cos(time)) / 2;
   }
 }
