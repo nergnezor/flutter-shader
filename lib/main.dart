@@ -124,7 +124,8 @@ class Shader extends FlameGame
     speed = speed * 0.98 + current_speed * 0.1;
 
     radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
-    radius -= speed.length / 10;
+    radius -= speed.length / 20;
+    radius = radius.clamp(20, 100);
     // Update position
     pos.position += speed * dt * 3;
   }
