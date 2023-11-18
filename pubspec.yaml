@@ -16,3 +16,4 @@ flutter:
   uses-material-design: true
   shaders:
     - shaders/shader.frag
+    - shaders/bg.frag

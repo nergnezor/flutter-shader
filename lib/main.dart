@@ -46,10 +46,11 @@ class _ShaderPageState extends State<ShaderPage> {
 class Shader extends FlameGame
     with MouseMovementDetector, MultiTouchDragDetector {
   late final FragmentProgram _program;
+  late final FragmentProgram _program2;
   late final FragmentShader shader;
+  late final FragmentShader bgShader;
 
   double time = 0;
-  Vector2 mouse = Vector2.zero();
   double radius = 100;
   Vector2 speed = Vector2.zero();
   Vector2 move = Vector2.zero();
@@ -62,10 +63,7 @@ class Shader extends FlameGame
   }
 
   void updateMousePosition(Vector2 position) {
-    final previous = mouse;
-    mouse = position;
-    // pos.position = position;
-    move = mouse - pos.position;
+    move = position - pos.position;
     time = 0;
     speed = Vector2.zero();
   }
@@ -84,6 +82,8 @@ class Shader extends FlameGame
   Future<void>? onLoad() async {
     _program = await FragmentProgram.fromAsset('shaders/shader.frag');
     shader = _program.fragmentShader();
+    _program2 = await FragmentProgram.fromAsset('shaders/bg.frag');
+    bgShader = _program2.fragmentShader();
     pos.position = Vector2.zero();
     add(pos);
   }
@@ -108,6 +108,16 @@ class Shader extends FlameGame
     }
     circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
     circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
+
+    bgShader
+      ..setFloat(0, size.x)
+      ..setFloat(1, size.y)
+      ..setFloat(2, time)
+      ..setFloat(3, radius)
+      ..setFloat(4, speed.x)
+      ..setFloat(5, speed.y);
+
+    canvas.drawRect(Offset.zero & size.toSize(), Paint()..shader = bgShader);
 
     canvas
       ..translate(circle.x, circle.y)
