@@ -114,7 +114,6 @@ class Shader extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
-    radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
     time += dt;
 
     var current_speed = Vector2.zero();
@@ -124,6 +123,8 @@ class Shader extends FlameGame
     }
     speed = speed * 0.92 + current_speed * 0.05;
 
+    radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
+    radius -= speed.length / 10;
     // Update position
     pos.position += speed * dt * 8;
   }
