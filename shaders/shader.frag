@@ -15,6 +15,6 @@ void main()
   if (center_distance > r) return;
 
   
-  float alpha = pow(center_distance/RADIUS,2);
+  float alpha = pow(center_distance/r,3);
   fragColor = vec4(0.1+extra,alpha,0.4+pow(extra,4),1);
 }
