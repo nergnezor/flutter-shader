@@ -10,11 +10,10 @@ void main()
   fragColor = vec4(0);
   vec2 center = resolution.xy / 2;
   float center_distance = distance(FlutterFragCoord().xy, center);
-  float extra =  pow(7*cos(time)/8,2);
-  const float r = radius * (1 + extra);
-  if (center_distance > r) return;
+  if (center_distance > radius) return;
 
-  
-  float alpha = pow(center_distance/r,3);
-  fragColor = vec4(0.1+extra,alpha,0.4+pow(extra,4),1);
+  float red =  pow(7*cos(time)/8,2);
+  float green = pow(center_distance/radius,3);
+  float blue = 0.4+pow(red,4);
+  fragColor = vec4(red,green,blue,1);
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/events.dart';
@@ -95,5 +96,7 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   @override
   void update(double dt) {
     time += dt;
+    // float extra =  pow(7*cos(time)/8,2);
+    radius = 100 + 50 * (1 + cos(time)) / 2;
   }
 }
