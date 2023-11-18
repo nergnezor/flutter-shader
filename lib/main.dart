@@ -48,6 +48,7 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   double time = 0;
   Vector2 mouse = Vector2.zero();
   double radius = 100;
+  Vector2 speed = Vector2.zero();
 
   // Get pointer input
   @override
