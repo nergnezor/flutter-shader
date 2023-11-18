@@ -47,6 +47,7 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
 
   double time = 0;
   Vector2 mouse = Vector2.zero();
+  double radius = 100;
 
   // Get pointer input
   @override
@@ -75,10 +76,15 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
     shader
       ..setFloat(0, size.x)
       ..setFloat(1, size.y)
-      ..setFloat(2, time);
+      ..setFloat(2, time)
+      ..setFloat(3, radius);
+    Vector2 circle = mouse - size / 2;
+    // Limit position to always show full sphere
+    circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
+    circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
 
     canvas
-      ..translate(mouse.x - size.x / 2, mouse.y - size.y / 2)
+      ..translate(circle.x, circle.y)
       ..drawRect(
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
