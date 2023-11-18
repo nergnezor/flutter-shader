@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -42,7 +43,8 @@ class _ShaderPageState extends State<ShaderPage> {
   }
 }
 
-class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
+class Shader extends FlameGame
+    with MouseMovementDetector, MultiTouchDragDetector {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
@@ -50,6 +52,8 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   Vector2 mouse = Vector2.zero();
   double radius = 100;
   Vector2 speed = Vector2.zero();
+  Vector2 move = Vector2.zero();
+  PositionComponent pos = PositionComponent();
 
   // Get pointer input
   @override
@@ -58,7 +62,10 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   }
 
   void updateMousePosition(Vector2 position) {
+    final previous = mouse;
     mouse = position;
+    // pos.position = position;
+    move = mouse - pos.position;
     time = 0;
   }
 
@@ -76,16 +83,22 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
   Future<void>? onLoad() async {
     _program = await FragmentProgram.fromAsset('shaders/shader.frag');
     shader = _program.fragmentShader();
+    // var component = PositionComponent()
+    //   ..x = 100 // Set the x position
+    //   ..y = 200; // Set the y position
+    pos.position = Vector2(100, 200);
+    add(pos);
   }
 
   @override
   void render(Canvas canvas) {
+    super.render(canvas);
     shader
       ..setFloat(0, size.x)
       ..setFloat(1, size.y)
       ..setFloat(2, time)
       ..setFloat(3, radius);
-    Vector2 circle = mouse - size / 2;
+    Vector2 circle = pos.position - size / 2;
     // Limit position to always show full sphere
     circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
     circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
@@ -100,7 +113,18 @@ class Shader extends Game with MouseMovementDetector, MultiTouchDragDetector {
 
   @override
   void update(double dt) {
+    super.update(dt);
     radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
     time += dt;
+
+    if (move == Vector2.zero()) return;
+    final current_speed = move / dt;
+    move = Vector2.zero();
+    // Update speed with IIR filter
+    speed = speed * 0.9 + current_speed * 0.1;
+
+    // Update position
+    pos.position += speed * dt;
+    print(pos.position);
   }
 }
