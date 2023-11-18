@@ -99,7 +99,13 @@ class Shader extends FlameGame
       ..setFloat(4, speed.x)
       ..setFloat(5, speed.y);
     Vector2 circle = pos.position - size / 2;
-    // Clamp to screen
+    // Clamp to screen and change speed direction if needed
+    if (circle.x < -size.x / 2 + radius || circle.x > size.x / 2 - radius) {
+      speed.x *= -1;
+    }
+    if (circle.y < -size.y / 2 + radius || circle.y > size.y / 2 - radius) {
+      speed.y *= -1;
+    }
     circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
     circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
 
