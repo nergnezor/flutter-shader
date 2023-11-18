@@ -83,10 +83,7 @@ class Shader extends FlameGame
   Future<void>? onLoad() async {
     _program = await FragmentProgram.fromAsset('shaders/shader.frag');
     shader = _program.fragmentShader();
-    // var component = PositionComponent()
-    //   ..x = 100 // Set the x position
-    //   ..y = 200; // Set the y position
-    pos.position = Vector2(100, 200);
+    pos.position = Vector2.zero();
     add(pos);
   }
 
@@ -117,14 +114,14 @@ class Shader extends FlameGame
     radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
     time += dt;
 
-    if (move == Vector2.zero()) return;
-    final current_speed = move / dt;
-    move = Vector2.zero();
-    // Update speed with IIR filter
+    var current_speed = Vector2.zero();
+    if (move != Vector2.zero()) {
+      current_speed = move / dt;
+      move = Vector2.zero();
+    }
     speed = speed * 0.9 + current_speed * 0.1;
 
     // Update position
     pos.position += speed * dt;
-    print(pos.position);
   }
 }
