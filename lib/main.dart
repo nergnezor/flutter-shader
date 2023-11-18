@@ -67,6 +67,7 @@ class Shader extends FlameGame
     // pos.position = position;
     move = mouse - pos.position;
     time = 0;
+    speed = Vector2.zero();
   }
 
   // Get touch input
@@ -94,9 +95,11 @@ class Shader extends FlameGame
       ..setFloat(0, size.x)
       ..setFloat(1, size.y)
       ..setFloat(2, time)
-      ..setFloat(3, radius);
+      ..setFloat(3, radius)
+      ..setFloat(4, speed.x)
+      ..setFloat(5, speed.y);
     Vector2 circle = pos.position - size / 2;
-    // Limit position to always show full sphere
+    // Clamp to screen
     circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
     circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
 
@@ -119,9 +122,9 @@ class Shader extends FlameGame
       current_speed = move / dt;
       move = Vector2.zero();
     }
-    speed = speed * 0.9 + current_speed * 0.1;
+    speed = speed * 0.92 + current_speed * 0.05;
 
     // Update position
-    pos.position += speed * dt;
+    pos.position += speed * dt * 8;
   }
 }
