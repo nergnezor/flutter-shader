@@ -109,13 +109,13 @@ class Shader extends FlameGame
     circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
     circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
 
-    bgShader
-      ..setFloat(0, size.x)
-      ..setFloat(1, size.y)
-      ..setFloat(2, time)
-      ..setFloat(3, radius)
-      ..setFloat(4, speed.x)
-      ..setFloat(5, speed.y);
+    // bgShader
+    //   ..setFloat(0, size.x)
+    //   ..setFloat(1, size.y)
+    //   ..setFloat(2, time)
+    //   ..setFloat(3, radius)
+    //   ..setFloat(4, speed.x)
+    //   ..setFloat(5, speed.y);
 
     canvas.drawRect(Offset.zero & size.toSize(), Paint()..shader = bgShader);
 
@@ -125,13 +125,13 @@ class Shader extends FlameGame
         Offset.zero & size.toSize(),
         Paint()..shader = shader,
       );
-    shader..setFloat(3, radius * 0.5);
-    canvas
-      ..translate(circle.x + 200, circle.y)
-      ..drawRect(
-        Offset.zero & size.toSize(),
-        Paint()..shader = shader,
-      );
+    // shader..setFloat(3, radius * 0.5);
+    // canvas
+    //   ..translate(circle.x + 200, circle.y)
+    //   ..drawRect(
+    //     Offset.zero & size.toSize(),
+    //     Paint()..shader = shader,
+    //   );
   }
 
   @override
