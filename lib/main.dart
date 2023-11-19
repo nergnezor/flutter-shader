@@ -113,6 +113,11 @@ class Shader extends FlameGame
       ..setFloat(6, speed.x)
       ..setFloat(7, speed.y);
 
+    bgShader
+      ..setFloat(0, size.x)
+      ..setFloat(1, size.y)
+      ..setFloat(2, time);
+
     canvas.drawRect(Offset.zero & size.toSize(), Paint()..shader = bgShader);
 
     canvas
