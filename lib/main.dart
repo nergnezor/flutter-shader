@@ -126,17 +126,21 @@ class Shader extends FlameGame
     canvas
       // ..translate(circle.x, circle.y)
       ..drawRect(
-        Rect.fromCircle(center: circle.toOffset(), radius: radius),
+        Rect.fromCircle(center: circle.toOffset(), radius: radius + 100),
         // Vector2.all(100).toOffset() & Vector2.all(400).toSize(),
         Paint()..shader = shader,
       );
-    // shader..setFloat(3, radius * 0.5);
-    // canvas
-    //   ..translate(circle.x + 200, circle.y)
-    //   ..drawRect(
-    //     Offset.zero & size.toSize(),
-    //     Paint()..shader = shader,
-    //   );
+    shader
+      // ..setFloat(3, circle.x)
+      // ..setFloat(4, circle.y)
+      ..setFloat(5, radius * 0.5);
+
+    canvas
+      ..translate(circle.x + 2, circle.y)
+      ..drawRect(
+        Rect.fromCircle(center: circle.toOffset(), radius: radius / 2 + 100),
+        Paint()..shader = shader,
+      );
   }
 
   @override

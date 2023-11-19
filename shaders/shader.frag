@@ -9,8 +9,6 @@ uniform float radius;
 uniform vec2 speed;
 out vec4 fragColor;
 
-const float BORDER = 10.0;
-
 vec4 calculateColor(float center_distance, float radius, float time)
 {
   float red = pow(7 * sin(time) / 8, 2);
