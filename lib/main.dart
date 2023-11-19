@@ -91,23 +91,27 @@ class Shader extends FlameGame
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+    Vector2 circle = pos.position;
+    // -size / 2;
+    // Clamp to screen and change speed direction if needed
+    if (circle.x < 0 || circle.x > size.x) {
+      speed.x *= -1;
+    }
+    if (circle.y < 0 || circle.y > size.y) {
+      speed.y *= -1;
+    }
+    circle.x = circle.x.clamp(0, size.x);
+    circle.y = circle.y.clamp(0, size.y);
+
     shader
       ..setFloat(0, size.x)
       ..setFloat(1, size.y)
       ..setFloat(2, time)
-      ..setFloat(3, radius)
-      ..setFloat(4, speed.x)
-      ..setFloat(5, speed.y);
-    Vector2 circle = pos.position - size / 2;
-    // Clamp to screen and change speed direction if needed
-    if (circle.x < -size.x / 2 + radius || circle.x > size.x / 2 - radius) {
-      speed.x *= -1;
-    }
-    if (circle.y < -size.y / 2 + radius || circle.y > size.y / 2 - radius) {
-      speed.y *= -1;
-    }
-    circle.x = circle.x.clamp(-size.x / 2 + radius, size.x / 2 - radius);
-    circle.y = circle.y.clamp(-size.y / 2 + radius, size.y / 2 - radius);
+      ..setFloat(3, circle.x)
+      ..setFloat(4, circle.y)
+      ..setFloat(5, radius)
+      ..setFloat(6, speed.x)
+      ..setFloat(7, speed.y);
 
     // bgShader
     //   ..setFloat(0, size.x)
@@ -120,9 +124,10 @@ class Shader extends FlameGame
     canvas.drawRect(Offset.zero & size.toSize(), Paint()..shader = bgShader);
 
     canvas
-      ..translate(circle.x, circle.y)
+      // ..translate(circle.x, circle.y)
       ..drawRect(
-        Offset.zero & size.toSize(),
+        Rect.fromCircle(center: circle.toOffset(), radius: radius),
+        // Vector2.all(100).toOffset() & Vector2.all(400).toSize(),
         Paint()..shader = shader,
       );
     // shader..setFloat(3, radius * 0.5);

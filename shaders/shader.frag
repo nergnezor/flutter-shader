@@ -4,6 +4,7 @@ precision mediump float;
 
 uniform vec2 resolution;
 uniform float time;
+uniform vec2 position;
 uniform float radius;
 uniform vec2 speed;
 out vec4 fragColor;
@@ -20,8 +21,11 @@ vec4 calculateColor(float center_distance, float radius, float time)
 
 void main()
 {
-  vec2 center = resolution.xy / 2;
-  float center_distance = distance(FlutterFragCoord().xy, center);
+  // fragColor = vec4(0, 0, 0, 1);
+  // return;
+  // vec2 center = resolution.xy / 2;
+  // vec2 center = vec2(radius);
+  float center_distance = distance(FlutterFragCoord().xy, position);
   float velocity = length(speed);
   const float value = sqrt(velocity) / 4;
 
