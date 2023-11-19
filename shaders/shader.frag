@@ -13,7 +13,7 @@ vec4 calculateColor(float center_distance, float radius, float time)
   float red = pow(7 * sin(time) / 8, 2);
   float green = pow(center_distance / radius, 3);
   float blue = 0.4 + pow(red, 4);
-  return vec4(red, green, blue, 1);
+  return vec4(red, green, blue, 0.8);
 }
 
 void main()
