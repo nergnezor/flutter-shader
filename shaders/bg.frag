@@ -10,10 +10,14 @@ const float PI = 3.1415926535897932384626433832795;
 
 void draw_tunnel(float center_distance, float hole_radius, float time, out vec4 color)
 {
-    float red = pow(7 * sin(time) / 8, 2);
-    float green = pow(center_distance / hole_radius, 3);
-    float blue = 0.4 + pow(red, 4);
-    color = vec4(red, green, blue, 0.8);
+    float center_distance_interval = 0.1;
+    bool is_in_interval = mod(pow(center_distance, 1.0 + sin(time / 10) / 1), center_distance_interval) < 0.05;
+    if (is_in_interval)
+    {
+        color = vec4(0.8);
+        return;
+    }
+    color = vec4(0);
 }
 
 float drawLine(vec2 p1, vec2 p2, vec2 uv, float a)
