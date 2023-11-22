@@ -10,12 +10,12 @@ void draw_tunnel(float center_distance, float hole_radius, float time, out vec4 
 {
     color = vec4(0);
     float center_distance_interval = 0.1;
-    bool is_in_interval = mod(pow(center_distance, 0.3 * (1 + sin(time))), center_distance_interval) < 0.05;
+    bool is_in_interval = mod(pow(center_distance, sin(time) / 2), center_distance_interval) < 0.05;
     if (is_in_interval)
     {
-        float red = 0.8;
-        float green = 0.6 * sin(center_distance / hole_radius);
-        float blue = 0.7 * sin(time) * center_distance / hole_radius;
+        float red = sin(center_distance / 1);
+        float green = 0.2;
+        float blue = pow(red, 4);
         color = vec4(red, green, blue, 0.8);
     }
 }
@@ -40,7 +40,7 @@ float drawLine(vec2 p1, vec2 p2, vec2 uv, float a)
 void main()
 {
     float center_distance = distance(FlutterFragCoord().xy, resolution / 2);
-    float hole_radius = 50.0;
+    float hole_radius = 0.0;
     if (center_distance < hole_radius)
     {
         fragColor = vec4(0.0, 0.0, 0.0, 1.0);
