@@ -1,6 +1,4 @@
-#version 460 core
 #include <flutter/runtime_effect.glsl>
-precision mediump float;
 
 uniform vec2 resolution;
 uniform float time;
@@ -10,14 +8,16 @@ const float PI = 3.1415926535897932384626433832795;
 
 void draw_tunnel(float center_distance, float hole_radius, float time, out vec4 color)
 {
+    color = vec4(0);
     float center_distance_interval = 0.1;
     bool is_in_interval = mod(pow(center_distance, 0.3 * (1 + sin(time))), center_distance_interval) < 0.05;
     if (is_in_interval)
     {
-        color = vec4(0.8);
-        return;
+        float red = 0.8;
+        float green = 0.6 * sin(center_distance / hole_radius);
+        float blue = 0.7 * sin(time) * center_distance / hole_radius;
+        color = vec4(red, green, blue, 0.8);
     }
-    color = vec4(0);
 }
 
 float drawLine(vec2 p1, vec2 p2, vec2 uv, float a)
