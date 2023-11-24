@@ -10,13 +10,11 @@ void draw_tunnel(float center_distance, float hole_radius, float time, out vec4 
 {
     color = vec4(0);
     float center_distance_interval = 0.1;
-    bool is_in_interval = mod(pow(center_distance, sin(time) / 2), center_distance_interval) < 0.05;
+    bool is_in_interval = mod(pow(center_distance, 0.1*(1+1+sin(time / 2))), center_distance_interval) < center_distance_interval / 2.0;
     if (is_in_interval)
     {
-        float red = sin(center_distance / 1);
-        float green = 0.2;
-        float blue = pow(red, 4);
-        color = vec4(red, green, blue, 0.8);
+        float r = 30*pow(center_distance / length(resolution), 3);
+        color = vec4(r/2, 0, r/3, 1.0);
     }
 }
 
