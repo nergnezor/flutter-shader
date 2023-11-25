@@ -74,7 +74,7 @@ class Forge2DExample extends Forge2DGame
     final direction = localLocation - ball.position;
     final distance = direction.length;
     // print('mouse: $localLocation, ball: ${ball.position}');
-    if (distance > 20) {
+    if (distance > 5) {
       ball.body.applyLinearImpulse(direction * 500);
     }
   }
