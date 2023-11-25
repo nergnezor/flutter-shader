@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-class Player extends PositionComponent with CollisionCallbacks {
+class Player extends PositionComponent with CollisionCallbacks, HasGameRef {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
@@ -25,11 +25,14 @@ class Player extends PositionComponent with CollisionCallbacks {
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is ScreenHitbox) {
-      speed *= -1;
-      // if (speed.length < 10) {
-      //   // Pull towards the center
-      //   speed += (Vector2.zero() - position) * 1;
-      // }
+      intersectionPoints.forEach((element) {
+        if (element.x == 0 || element.x == gameRef.size.x) {
+          speed.x *= -1;
+        }
+        if (element.y == 0 || element.y == gameRef.size.y) {
+          speed.y *= -1;
+        }
+      });
       return;
     }
     touching = true;
@@ -90,5 +93,6 @@ class Player extends PositionComponent with CollisionCallbacks {
     circleHitbox.radius = radius;
     // Update position
     position += speed * dt;
+    position.clamp(Vector2.all(radius), gameRef.size - Vector2.all(radius));
   }
 }
