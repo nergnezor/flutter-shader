@@ -11,10 +11,12 @@ void main() {
   runApp(const GameWidget.controlled(gameFactory: Forge2DExample.new));
 }
 
-class Forge2DExample extends Forge2DGame {
+class Forge2DExample extends Forge2DGame
+    with MultiTouchDragDetector, MouseMovementDetector {
   late final FragmentProgram _program2;
   late final FragmentShader bgShader;
   double time = 0;
+  late Ball ball;
 
   @override
   void update(double dt) {
@@ -27,6 +29,9 @@ class Forge2DExample extends Forge2DGame {
     await super.onLoad();
 
     camera.viewport.add(FpsTextComponent());
+    camera.viewfinder.zoom = 1;
+    ball = Ball();
+    world.add(ball);
     world.add(Ball());
     world.addAll(createBoundaries());
     _program2 = await FragmentProgram.fromAsset('shaders/bg.frag');
@@ -66,13 +71,21 @@ class Forge2DExample extends Forge2DGame {
   void updateMousePosition(Vector2 position) {
     // player.move = position - player.position;
     // player.speed = Vector2.zero();
+    final direction = position - size / 2 - ball.position;
+    final distance = direction.length;
+    print('mouse: $position, ball: ${ball.position}, distance: $distance');
+    if (distance > 2) {
+      ball.body.applyLinearImpulse(direction * 50000);
+      // ball.body.applyForce(direction * 5000000);
+    }
+    //   // body.applyLinearImpulse(direction * 5000);
   }
 
-  // // Get touch input
-  // @override
-  // void onDragUpdate(int pointerId, DragUpdateInfo info) {
-  //   updateMousePosition(info.eventPosition.widget);
-  // }
+  // Get touch input
+  @override
+  void onDragUpdate(int pointerId, DragUpdateInfo info) {
+    updateMousePosition(info.eventPosition.widget);
+  }
 }
 
 class Ball extends BodyComponent with TapCallbacks {
@@ -80,7 +93,7 @@ class Ball extends BodyComponent with TapCallbacks {
       : super(
           fixtureDefs: [
             FixtureDef(
-              CircleShape()..radius = 10,
+              CircleShape()..radius = 50,
               restitution: 0.8,
               friction: 0.4,
             ),
@@ -94,17 +107,17 @@ class Ball extends BodyComponent with TapCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
   double time = 0;
-  double radius = 10;
+  double radius = 50;
   Vector2 speed = Vector2.zero();
   Vector2 move = Vector2.zero();
   static const int padding = 2;
-  @override
-  void onTapDown(TapDownEvent event) {
-    // Towards the tap
-    final direction = event.localPosition - position;
+  // @override
+  // void onTapDown(TapDownEvent event) {
+  //   // Towards the tap
+  //   final direction = event.localPosition - position;
 
-    body.applyLinearImpulse(direction * 5000);
-  }
+  //   // body.applyLinearImpulse(direction * 5000);
+  // }
 
   @override
   void render(Canvas canvas) {
@@ -112,14 +125,14 @@ class Ball extends BodyComponent with TapCallbacks {
 
     shader
       ..setFloat(0, time)
-      ..setFloat(1, 5)
+      ..setFloat(1, radius)
       ..setFloat(2, speed.x)
       ..setFloat(3, speed.y);
 
     canvas
       ..drawCircle(
         Offset.zero,
-        5,
+        radius,
         Paint()..shader = shader,
       );
   }
