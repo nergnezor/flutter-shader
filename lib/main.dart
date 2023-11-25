@@ -29,7 +29,7 @@ class Forge2DExample extends Forge2DGame
     await super.onLoad();
 
     camera.viewport.add(FpsTextComponent());
-    camera.viewfinder.zoom = 1;
+    // camera.viewfinder.zoom = 1;
     ball = Ball();
     world.add(ball);
     world.add(Ball());
@@ -69,16 +69,14 @@ class Forge2DExample extends Forge2DGame
   }
 
   void updateMousePosition(Vector2 position) {
-    // player.move = position - player.position;
-    // player.speed = Vector2.zero();
-    final direction = position - size / 2 - ball.position;
+    var localLocation = position - size / 2;
+    localLocation /= camera.viewfinder.zoom;
+    final direction = localLocation - ball.position;
     final distance = direction.length;
-    print('mouse: $position, ball: ${ball.position}, distance: $distance');
-    if (distance > 2) {
-      ball.body.applyLinearImpulse(direction * 50000);
-      // ball.body.applyForce(direction * 5000000);
+    // print('mouse: $localLocation, ball: ${ball.position}');
+    if (distance > 20) {
+      ball.body.applyLinearImpulse(direction * 500);
     }
-    //   // body.applyLinearImpulse(direction * 5000);
   }
 
   // Get touch input
@@ -93,7 +91,7 @@ class Ball extends BodyComponent with TapCallbacks {
       : super(
           fixtureDefs: [
             FixtureDef(
-              CircleShape()..radius = 50,
+              CircleShape()..radius = 5,
               restitution: 0.8,
               friction: 0.4,
             ),
@@ -107,22 +105,13 @@ class Ball extends BodyComponent with TapCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
   double time = 0;
-  double radius = 50;
+  double radius = 5;
   Vector2 speed = Vector2.zero();
   Vector2 move = Vector2.zero();
   static const int padding = 2;
-  // @override
-  // void onTapDown(TapDownEvent event) {
-  //   // Towards the tap
-  //   final direction = event.localPosition - position;
-
-  //   // body.applyLinearImpulse(direction * 5000);
-  // }
 
   @override
   void render(Canvas canvas) {
-    // super.render(canvas);
-
     shader
       ..setFloat(0, time)
       ..setFloat(1, radius)
