@@ -40,7 +40,6 @@ class ShaderGame extends FlameGame
   late final FragmentProgram _program2;
   late final FragmentShader bgShader;
   late final Player player;
-  late final Player player2;
 
   double time = 0;
 
@@ -67,8 +66,7 @@ class ShaderGame extends FlameGame
     bgShader = _program2.fragmentShader();
     player = Player(400);
     add(player);
-    player2 = Player(200);
-    add(player2);
+    add(Player(200));
 
     add(ScreenHitbox());
   }

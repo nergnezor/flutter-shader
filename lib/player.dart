@@ -12,8 +12,10 @@ class Player extends PositionComponent with CollisionCallbacks {
   late double radius;
   Vector2 speed = Vector2.zero();
   Vector2 move = Vector2.zero();
-  static const int padding = 10;
+  static const int padding = 20;
   bool touching = false;
+
+  late final CircleHitbox circleHitbox;
 
   Player(int i) {
     position = Vector2.all(i.toDouble());
@@ -43,7 +45,10 @@ class Player extends PositionComponent with CollisionCallbacks {
     shader = _program.fragmentShader();
     radius = size.x / 2;
 
-    add(CircleHitbox(radius: size.x / 2, isSolid: true));
+    add(circleHitbox = CircleHitbox(
+      position: Vector2.all(radius),
+      radius: radius,
+    ));
   }
 
   @override
@@ -82,6 +87,7 @@ class Player extends PositionComponent with CollisionCallbacks {
     radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
     radius -= speed.length / 200;
     radius = radius.clamp(20, 100);
+    circleHitbox.radius = radius;
     // Update position
     position += speed * dt;
   }
