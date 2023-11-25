@@ -24,10 +24,10 @@ class Player extends PositionComponent with CollisionCallbacks {
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is ScreenHitbox) {
       speed *= -1;
-      if (speed.length < 10) {
-        // Pull towards the center
-        speed += (Vector2.zero() - position) * 1;
-      }
+      // if (speed.length < 10) {
+      //   // Pull towards the center
+      //   speed += (Vector2.zero() - position) * 1;
+      // }
       return;
     }
     touching = true;
