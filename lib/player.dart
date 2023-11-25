@@ -51,28 +51,18 @@ class Player extends PositionComponent with CollisionCallbacks {
     super.render(canvas);
 
     if (touching) {
-      // canvas.drawRect(
-      //   Rect.fromCircle(center: Offset.zero, radius: radius + padding),
-      //   Paint()..color = Color(0x88ff0000),
-      // );
       touching = false;
     }
 
     shader
-      ..setFloat(0, size.x)
-      ..setFloat(1, size.y)
-      ..setFloat(2, time)
-      ..setFloat(3, 0)
-      ..setFloat(4, 0)
-      ..setFloat(5, radius)
-      ..setFloat(6, speed.x)
-      ..setFloat(7, speed.y);
+      ..setFloat(0, time)
+      ..setFloat(1, radius)
+      ..setFloat(2, speed.x)
+      ..setFloat(3, speed.y);
 
     canvas
-      // ..translate(circle.x, circle.y)
       ..drawRect(
         Rect.fromCircle(center: Offset.zero, radius: radius + padding),
-        // Vector2.all(100).toOffset() & Vector2.all(400).toSize(),
         Paint()..shader = shader,
       );
   }

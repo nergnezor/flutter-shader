@@ -1,8 +1,6 @@
 #include <flutter/runtime_effect.glsl>
 
-uniform vec2 resolution;
 uniform float time;
-uniform vec2 position;
 uniform float radius;
 uniform vec2 speed;
 out vec4 fragColor;
@@ -17,7 +15,7 @@ vec4 calculateColor(float center_distance, float radius, float time)
 
 void main()
 {
-  float center_distance = distance(FlutterFragCoord().xy, position);
+  float center_distance = length(FlutterFragCoord().xy);
   float velocity = length(speed);
   const float value = sqrt(velocity) / 4;
 
