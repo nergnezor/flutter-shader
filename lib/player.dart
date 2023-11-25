@@ -80,8 +80,8 @@ class Player extends PositionComponent with CollisionCallbacks, HasGameRef {
     super.update(dt);
     time += dt;
 
-    if (move != Vector2.zero()) {
-      speed = speed * 0.5 + move / dt * 0.5;
+    if (move.length > 20) {
+      speed = speed * 0.5 + move / dt * 0.2;
       move = Vector2.zero();
     } else {
       speed = speed * 0.95;
