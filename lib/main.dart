@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -26,12 +27,6 @@ class ShaderPage extends StatefulWidget {
 class _ShaderPageState extends State<ShaderPage> {
   final game = ShaderGame();
 
-  // @override
-  // void dispose() {
-  //   game.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,10 +46,6 @@ class ShaderGame extends FlameGame
   late final Player player2;
 
   double time = 0;
-  // double radius = 100;
-  // Vector2 speed = Vector2.zero();
-  // Vector2 move = Vector2.zero();
-  // PositionComponent pos = PositionComponent();
 
   // Get pointer input
   @override
@@ -63,13 +54,8 @@ class ShaderGame extends FlameGame
   }
 
   void updateMousePosition(Vector2 position) {
-    // move = position - pos.position;
-    // time = 0;
-    // speed = Vector2.zero();
-    // player.pos.position = position;
     player.move = position - player.position;
     player.speed = Vector2.zero();
-
   }
 
   // Get touch input
@@ -78,16 +64,10 @@ class ShaderGame extends FlameGame
     updateMousePosition(info.eventPosition.widget);
   }
 
-  // void dispose() {
-  //   shader.dispose();
-  // }
-
   @override
   Future<void>? onLoad() async {
     _program2 = await FragmentProgram.fromAsset('shaders/bg.frag');
     bgShader = _program2.fragmentShader();
-    // pos.position = Vector2.zero();
-    // add(pos);
     player = Player();
     player.position = Vector2.all(400);
     player.size = Vector2.all(100);
@@ -96,14 +76,12 @@ class ShaderGame extends FlameGame
     player2.position = Vector2.all(200);
     player2.size = Vector2.all(100);
     add(player2);
+
+    add(ScreenHitbox());
   }
 
   @override
   void render(Canvas canvas) {
-
-
-
-
     bgShader
       ..setFloat(0, size.x)
       ..setFloat(1, size.y)
@@ -111,8 +89,6 @@ class ShaderGame extends FlameGame
 
     canvas.drawRect(Offset.zero & size.toSize(), Paint()..shader = bgShader);
     super.render(canvas);
-
-
   }
 
   @override
