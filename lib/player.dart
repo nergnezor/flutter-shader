@@ -78,7 +78,7 @@ class Player extends PositionComponent with CollisionCallbacks {
     time += dt;
 
     if (move != Vector2.zero()) {
-      speed = move / dt;
+      speed = speed * 0.5 + move / dt * 0.5;
       move = Vector2.zero();
     } else {
       speed = speed * 0.95;
