@@ -30,9 +30,6 @@ class _ShaderPageState extends State<ShaderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shader'),
-      ),
       body: GameWidget(game: game),
     );
   }
@@ -50,12 +47,12 @@ class ShaderGame extends FlameGame
   // Get pointer input
   @override
   void onMouseMove(PointerHoverInfo info) {
-    updateMousePosition(info.eventPosition.global);
+    updateMousePosition(info.eventPosition.widget);
   }
 
   void updateMousePosition(Vector2 position) {
     player.move = position - player.position;
-    player.speed = Vector2.zero();
+    // player.speed = Vector2.zero();
   }
 
   // Get touch input
@@ -68,13 +65,9 @@ class ShaderGame extends FlameGame
   Future<void>? onLoad() async {
     _program2 = await FragmentProgram.fromAsset('shaders/bg.frag');
     bgShader = _program2.fragmentShader();
-    player = Player();
-    player.position = Vector2.all(400);
-    player.size = Vector2.all(100);
+    player = Player(400);
     add(player);
-    player2 = Player();
-    player2.position = Vector2.all(200);
-    player2.size = Vector2.all(100);
+    player2 = Player(200);
     add(player2);
 
     add(ScreenHitbox());

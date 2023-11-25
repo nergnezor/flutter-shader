@@ -15,10 +15,25 @@ class Player extends PositionComponent with CollisionCallbacks {
   static const int padding = 10;
   bool touching = false;
 
+  Player(int i) {
+    position = Vector2.all(i.toDouble());
+    size = Vector2.all(200);
+  }
+
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    print('Player collided with $other');
+    if (other is ScreenHitbox) {
+      speed *= -1;
+      if (speed.length < 10) {
+        // Pull towards the center
+        speed += (Vector2.zero() - position) * 1;
+      }
+      return;
+    }
     touching = true;
+    final direction = other.position - position;
+    // Bounce in the opposite direction
+    speed -= direction * 10;
     super.onCollision(intersectionPoints, other);
   }
 
@@ -36,10 +51,10 @@ class Player extends PositionComponent with CollisionCallbacks {
     super.render(canvas);
 
     if (touching) {
-      canvas.drawRect(
-        Rect.fromCircle(center: Offset.zero, radius: radius + padding),
-        Paint()..color = Color(0x88ff0000),
-      );
+      // canvas.drawRect(
+      //   Rect.fromCircle(center: Offset.zero, radius: radius + padding),
+      //   Paint()..color = Color(0x88ff0000),
+      // );
       touching = false;
     }
 
@@ -67,15 +82,15 @@ class Player extends PositionComponent with CollisionCallbacks {
     super.update(dt);
     time += dt;
 
-    var current_speed = Vector2.zero();
     if (move != Vector2.zero()) {
-      current_speed = move / dt;
+      speed = move / dt;
       move = Vector2.zero();
+    } else {
+      speed = speed * 0.95;
     }
-    speed = speed * 0.98 + current_speed * 0.1;
 
     radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
-    radius -= speed.length / 20;
+    radius -= speed.length / 200;
     radius = radius.clamp(20, 100);
     // Update position
     position += speed * dt;
