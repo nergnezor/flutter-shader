@@ -3,35 +3,57 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_forge2d/body_component.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 
-class Player extends PositionComponent with CollisionCallbacks, HasGameRef {
+class Player extends BodyComponent with CollisionCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
   double time = 0;
-  late double radius;
+  double radius = 100;
   Vector2 speed = Vector2.zero();
   Vector2 move = Vector2.zero();
   static const int padding = 20;
   bool touching = false;
 
-  late final CircleHitbox circleHitbox;
+  final CircleHitbox circleHitbox = CircleHitbox(
+    position: Vector2.all(100),
+    radius: 100,
+  );
 
-  Player(int i) {
-    position = Vector2.all(i.toDouble());
-    size = Vector2.all(200);
+  static BodyDef bdef = BodyDef(
+    linearDamping: 0.9,
+    angularDamping: 0.9,
+    type: BodyType.dynamic,
+    position: Vector2.all(100),
+  );
+
+  Player(int i, Forge2DWorld w) {
+    bodyDef?.position = Vector2.all(i.toDouble());
+    body = Body(
+      BodyDef(
+        position: Vector2.all(i.toDouble()),
+        linearVelocity: Vector2.zero(),
+        type: BodyType.dynamic,
+      ),
+      w.physicsWorld,
+    );
+
+    // position = Vector2.all(i.toDouble());
+    // size = Vector2.all(200);
   }
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is ScreenHitbox) {
       intersectionPoints.forEach((element) {
-        if (element.x == 0 || element.x == gameRef.size.x) {
-          speed.x *= -1;
-        }
-        if (element.y == 0 || element.y == gameRef.size.y) {
-          speed.y *= -1;
-        }
+        // if (element.x == 0 || element.x == gameRef.size.x) {
+        //   speed.x *= -1;
+        // }
+        // if (element.y == 0 || element.y == gameRef.size.y) {
+        //   speed.y *= -1;
+        // }
       });
       return;
     }
@@ -39,19 +61,17 @@ class Player extends PositionComponent with CollisionCallbacks, HasGameRef {
     final direction = other.position - position;
     // Bounce in the opposite direction
     speed -= direction * 10;
-    super.onCollision(intersectionPoints, other);
+    // super.onCollision(intersectionPoints, other);
   }
 
   @override
-  void onLoad() async {
+  Future onLoad() async {
+    super.onLoad();
     _program = await FragmentProgram.fromAsset('shaders/shader.frag');
     shader = _program.fragmentShader();
-    radius = size.x / 2;
+    // radius = size.x / 2;
 
-    add(circleHitbox = CircleHitbox(
-      position: Vector2.all(radius),
-      radius: radius,
-    ));
+    add(circleHitbox);
   }
 
   @override
@@ -92,7 +112,9 @@ class Player extends PositionComponent with CollisionCallbacks, HasGameRef {
     radius = radius.clamp(20, 100);
     circleHitbox.radius = radius;
     // Update position
-    position += speed * dt;
-    position.clamp(Vector2.all(radius), gameRef.size - Vector2.all(radius));
+    // position += speed * dt;
+    // Add force to body
+    body.applyForce(-speed);
+    // position.clamp(Vector2.all(radius), gameRef.size - Vector2.all(radius));
   }
 }

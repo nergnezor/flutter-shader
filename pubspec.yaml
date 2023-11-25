@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_shaders: ^0.1.0
-
+  flame_forge2d: ^0.16.0
 flutter:
   uses-material-design: true
   shaders:
