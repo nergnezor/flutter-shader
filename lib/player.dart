@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame_forge2d/flame_forge2d.dart';
@@ -21,13 +22,14 @@ class Ball extends BodyComponent {
   late final FragmentProgram _program;
   late final FragmentShader shader;
   double time = 0;
-  double radius = 5;
+  // double radius = 5;
   Vector2 speed = Vector2.zero();
   Vector2 move = Vector2.zero();
   static const int padding = 2;
 
   @override
   void render(Canvas canvas) {
+    final radius = fixtureDefs!.first.shape.radius;
     shader
       ..setFloat(0, time)
       ..setFloat(1, radius)
@@ -54,7 +56,8 @@ class Ball extends BodyComponent {
     super.update(dt);
     time += dt;
 
-    // radius = pow(4 + 1 * (1 + cos(time + pi)) / 2, 3).toDouble();
+    fixtureDefs!.first.shape.radius = pow(2 + 0.5 * (1 + cos(time + pi)) / 2, 3).toDouble();
+    // fixtureDefs.
     // radius -= speed.length / 200;
     // radius = radius.clamp(20, 100);
   }
