@@ -1,72 +1,100 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+
+import 'balls.dart';
+import 'boundaries.dart';
 import 'package:flutter/widgets.dart';
 
-import 'player.dart';
-import 'wall.dart';
-
 void main() {
-  runApp(const GameWidget.controlled(gameFactory: Forge2DExample.new));
+  runApp(const GameWidget.controlled(gameFactory: MouseJointExample.new));
 }
 
-class Forge2DExample extends Forge2DGame
-    with MultiTouchDragDetector, MouseMovementDetector {
+class MouseJointExample extends Forge2DGame {
+  MouseJointExample()
+      : super(gravity: Vector2(0, 10.0), world: MouseJointWorld());
+}
+
+class MouseJointWorld extends Forge2DWorld
+    with DragCallbacks, HasGameReference<Forge2DGame> {
   late final FragmentProgram program;
   late final FragmentShader shader;
   double time = 0;
   late List<Ball> balls;
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    time += dt;
-  }
+  late Ball ball;
+  late Body groundBody;
+  MouseJoint? mouseJoint;
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
+    super.onLoad();
+    final boundaries = createBoundaries(game);
+    addAll(boundaries);
 
-    camera.viewport.add(FpsTextComponent());
-    // camera.viewfinder.zoom = 1;
-    balls = List.generate(3, (index) => Ball());
-    world.addAll(balls);
-    world.addAll(createBoundaries(camera.visibleWorldRect));
+    final center = Vector2.zero();
+    groundBody = createBody(BodyDef());
+    ball = Ball(center, radius: 5);
+    add(ball);
+    add(Ball(center + Vector2(0, -10), radius: 5));
+    // add(CornerRamp(center));
+    // add(CornerRamp(center, isMirrored: true));
+
+    game.camera.viewport.add(FpsTextComponent());
+    // // camera.viewfinder.zoom = 1;
+    // balls = List.generate(3, (index) => Ball());
+    // world.addAll(balls);
+    // world.addAll(createBoundaries(camera.visibleWorldRect));
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
   }
 
   @override
-  void render(Canvas canvas) {
-    shader
-      ..setFloat(0, size.x)
-      ..setFloat(1, size.y)
-      ..setFloat(2, time);
+  void onDragStart(DragStartEvent info) {
+    super.onDragStart(info);
+    final mouseJointDef = MouseJointDef()
+      ..maxForce = 3000 * ball.body.mass * 10
+      ..dampingRatio = 0.1
+      ..frequencyHz = 5
+      ..target.setFrom(ball.body.position)
+      ..collideConnected = false
+      ..bodyA = groundBody
+      ..bodyB = ball.body;
 
-    canvas.drawRect(Offset.zero & size.toSize(), Paint()..shader = shader);
-    super.render(canvas);
-  }
-
-  void onMouseMove(PointerHoverInfo info) {
-    updateMousePosition(info.eventPosition.widget);
+    if (mouseJoint == null) {
+      mouseJoint = MouseJoint(mouseJointDef);
+      createJoint(mouseJoint!);
+    }
   }
 
   @override
-  void onDragUpdate(int pointerId, DragUpdateInfo info) {
-    updateMousePosition(info.eventPosition.widget, pointerId);
+  void onDragUpdate(DragUpdateEvent info) {
+    mouseJoint?.setTarget(info.localPosition);
   }
 
-  void updateMousePosition(Vector2 position, [int pointerId = 0]) {
-    var localLocation = position - size / 2;
-    localLocation /= camera.viewfinder.zoom;
-    final direction = localLocation - balls[pointerId].position;
-    final distance = direction.length;
+  @override
+  void onDragEnd(DragEndEvent info) {
+    super.onDragEnd(info);
+    destroyJoint(mouseJoint!);
+    mouseJoint = null;
+  }
 
-    balls[pointerId].body.applyLinearImpulse(direction * pow(distance / 4, 2).toDouble());
+  @override
+  void render(Canvas canvas) {
+    shader
+      ..setFloat(0, 5)
+      ..setFloat(1, 10)
+      ..setFloat(2, time);
+
+    canvas.drawRect(canvas.getLocalClipBounds(), Paint()..shader = shader);
+    // super.render(canvas);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    time += dt;
   }
 }
