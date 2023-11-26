@@ -15,8 +15,6 @@ vec4 calculateColor(float center_distance, float radius, float time)
 
 void main()
 {
-  // fragColor = vec4(1, 1, 1, 1);
-  // return;
   float center_distance = length(FlutterFragCoord().xy);
   float velocity = length(speed);
   const float value = sqrt(velocity) / 4;
