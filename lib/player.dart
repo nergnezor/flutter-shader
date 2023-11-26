@@ -56,9 +56,7 @@ class Ball extends BodyComponent {
     super.update(dt);
     time += dt;
 
-    fixtureDefs!.first.shape.radius = pow(2 + 0.5 * (1 + cos(time + pi)) / 2, 3).toDouble();
-    // fixtureDefs.
-    // radius -= speed.length / 200;
-    // radius = radius.clamp(20, 100);
+    // fixtureDefs!.first.shape.radius = pow(2 + 0.5 * (1 + cos(time + pi)) / 2, 3).toDouble();
+
   }
 }
