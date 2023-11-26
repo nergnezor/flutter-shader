@@ -80,15 +80,10 @@ class MouseJointWorld extends Forge2DWorld
   void render(Canvas canvas) {
     final scale = game.camera.viewfinder.scale.x;
     var rect = game.camera.visibleWorldRect;
-    rect = Rect.fromLTWH(
-      rect.left * scale + 180,
-      rect.top * scale,
-      rect.width * scale,
-      rect.height * scale,
-    );
+
     shader
-      ..setFloat(0, 40)
-      ..setFloat(1, 40)
+      ..setFloat(0, rect.width / scale)
+      ..setFloat(1, rect.height / scale)
       ..setFloat(2, time);
 
     canvas.drawRect(rect, Paint()..shader = shader);
