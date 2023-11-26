@@ -39,14 +39,9 @@ class MouseJointWorld extends Forge2DWorld
     ball = Ball(center, radius: 5);
     add(ball);
     add(Ball(center + Vector2(0, -10), radius: 5));
-    // add(CornerRamp(center));
-    // add(CornerRamp(center, isMirrored: true));
 
     game.camera.viewport.add(FpsTextComponent());
-    // // camera.viewfinder.zoom = 1;
-    // balls = List.generate(3, (index) => Ball());
-    // world.addAll(balls);
-    // world.addAll(createBoundaries(camera.visibleWorldRect));
+
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
   }
@@ -83,12 +78,20 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
+    final scale = game.camera.viewfinder.scale.x;
+    var rect = game.camera.visibleWorldRect;
+    rect = Rect.fromLTWH(
+      rect.left * scale + 180,
+      rect.top * scale,
+      rect.width * scale,
+      rect.height * scale,
+    );
     shader
-      ..setFloat(0, 5)
-      ..setFloat(1, 10)
+      ..setFloat(0, 40)
+      ..setFloat(1, 40)
       ..setFloat(2, time);
 
-    canvas.drawRect(canvas.getLocalClipBounds(), Paint()..shader = shader);
+    canvas.drawRect(rect, Paint()..shader = shader);
     // super.render(canvas);
   }
 
