@@ -93,7 +93,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
 // 60 x 0.8 = 48
     print(body.angle);
     var maxAngle = pi / 3 * 0.8;
-    var minAngle = 0;
+    var minAngle = 0.0;
 if (index == 0){
   minAngle = -maxAngle;
   maxAngle = 0;
