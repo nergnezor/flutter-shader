@@ -92,9 +92,14 @@ class Flipper extends BodyComponent with ContactCallbacks {
     super.update(dt);
 // 60 x 0.8 = 48
     print(body.angle);
-    const maxAngle = pi / 3 * 0.8;
-    if (body.angle.abs() > maxAngle || body.angle.abs() < 0) {
-      body.setTransform(body.position, body.angle.clamp(0, maxAngle));
+    var maxAngle = pi / 3 * 0.8;
+    var minAngle = 0;
+if (index == 0){
+  minAngle = -maxAngle;
+  maxAngle = 0;
+}
+    if (body.angle > maxAngle || body.angle < minAngle) {
+      body.setTransform(body.position, body.angle.clamp(minAngle, maxAngle));
       body.angularVelocity = 0;
     }
   }
