@@ -99,5 +99,21 @@ class MouseJointWorld extends Forge2DWorld
   void update(double dt) {
     super.update(dt);
     time += dt;
+    if (ball.body.position.y > game.camera.visibleWorldRect.bottom) {
+// Add some delay before resetting the ball
+      Future.delayed(Duration(milliseconds: 1000), () {
+        resetBall();
+      });
+    }
+  }
+  
+  void resetBall() {
+    ball.body.setTransform(Vector2.zero(), 0);
+    ball.body.linearVelocity = Vector2.zero();
+
+      // Add random force to the ball
+      ball.body.applyLinearImpulse(
+        Vector2.random() * 10,
+      );
   }
 }
