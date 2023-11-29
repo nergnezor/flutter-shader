@@ -109,7 +109,7 @@ class MouseJointWorld extends Forge2DWorld
   }
 
   void addRandomForce() {
-    final force = Vector2(5 * (Random().nextDouble() - 0.5), 0);
+    final force = Vector2(30 * (Random().nextDouble() - 0.5), 0);
     ball.body.applyLinearImpulse(force);
   }
 }
