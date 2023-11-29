@@ -89,7 +89,8 @@ final flipperShape = getFlipperShape(index);
   @override
   void update(double dt) {
     super.update(dt);
-    if (body.angle.abs() > pi/3) {
+// 60 x 0.8 = 48
+    if (body.angle.abs() > pi/3*0.8) {
       // body.setTransform(body.position, 0);
       body.angularVelocity = 0;
     }
