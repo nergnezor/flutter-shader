@@ -93,6 +93,12 @@ activeFlippers.clear();
   void update(double dt) {
     super.update(dt);
     time += dt;
+    if ((time*1000).round() % 1000 == 0){
+final v = Vector2(30 * (Random().nextDouble() - 0.5), -30);
+final b = Ball(v);
+    
+add(b);
+}
     if (ball.body.position.y > game.camera.visibleWorldRect.bottom) {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1000), () {
