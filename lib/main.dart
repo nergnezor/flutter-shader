@@ -70,7 +70,9 @@ class MouseJointWorld extends Forge2DWorld
       final id = info.pointerId % 2;
       activeFlippers[id].returnFlipper();
       activeFlippers.removeAt(id);
+return;
     }
+activeFlippers.clear();
   }
 
   @override
