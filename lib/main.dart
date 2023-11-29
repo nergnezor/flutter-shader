@@ -27,7 +27,7 @@ class MouseJointWorld extends Forge2DWorld
   double time = 0;
   late Ball ball;
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
-  static const PinballDiameter = 2.7; // (cm) = 27mm
+  Flipper? activeFlipper;
 
   @override
   Future<void> onLoad() async {
@@ -38,7 +38,7 @@ class MouseJointWorld extends Forge2DWorld
     addAll(boundaries);
 
     final center = Vector2.zero();
-    ball = Ball(center, PinballDiameter / 2);
+    ball = Ball(center);
     add(ball);
     addAll(flippers);
 
@@ -56,21 +56,24 @@ class MouseJointWorld extends Forge2DWorld
     final left = info.localPosition.x < 0;
     final flipper = flippers[left ? 0 : 1];
     flipper.body.angularVelocity = left ? -10 : 10;
-
+    activeFlipper = flipper;
     // Set a timer to stop the flipper
     Future.delayed(Duration(milliseconds: 100), () {
       flipper.body.angularVelocity = 0;
-      // Reset the flipper to its original position over time until the angle is 0
-      Future.doWhile(() async {
-        await Future.delayed(Duration(milliseconds: 10));
-        if (flipper.body.angle.abs() < 0.01) {
-          flipper.body.setTransform(flipper.body.position, 0);
-          return false;
-        }
-        flipper.body
-            .setTransform(flipper.body.position, flipper.body.angle * 0.9);
-        return true;
-      });
+    });
+  }
+
+  void returnFlipper(Flipper flipper) {
+    // Reset the flipper to its original position over time until the angle is 0
+    Future.doWhile(() async {
+      await Future.delayed(Duration(milliseconds: 10));
+      if (flipper.body.angle.abs() < 0.01) {
+        flipper.body.setTransform(flipper.body.position, 0);
+        return false;
+      }
+      flipper.body
+          .setTransform(flipper.body.position, flipper.body.angle * 0.6);
+      return true;
     });
   }
 
@@ -80,6 +83,7 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void onDragEnd(DragEndEvent info) {
     super.onDragEnd(info);
+    returnFlipper(activeFlipper!);
   }
 
   @override
@@ -93,7 +97,6 @@ class MouseJointWorld extends Forge2DWorld
       ..setFloat(2, time);
 
     canvas.drawRect(rect, Paint()..shader = shader);
-    // super.render(canvas);
   }
 
   @override
@@ -109,17 +112,17 @@ class MouseJointWorld extends Forge2DWorld
   }
 
   void resetBall() {
-    ball.body.setTransform(Vector2.zero(), 0);
     ball.body.linearVelocity = Vector2.zero();
+    ball.body.setTransform(Vector2(0,game.camera.visibleWorldRect.top * 0.8), 0);
 
     // Add random force to the ball
     Future.delayed(Duration(milliseconds: 1000), () {
       addRandomForce();
     });
   }
-  
+
   void addRandomForce() {
-    final force = Vector2(5*(Random().nextDouble() - 0.5), 0);
+    final force = Vector2(5 * (Random().nextDouble() - 0.5), 0);
     ball.body.applyLinearImpulse(force);
   }
 }

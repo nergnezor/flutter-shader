@@ -7,12 +7,12 @@ import 'flipper.dart';
 class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
-  final double radius;
+  static const PinballDiameter = 2.7; // (cm) = 27mm
+  final double radius = PinballDiameter / 2;
   final Vector2 _position;
 
   Ball(
-    this._position, 
-    this.radius,
+    this._position,
   ) {}
 
   @override
@@ -46,10 +46,10 @@ class Ball extends BodyComponent with ContactCallbacks {
   @override
   void renderCircle(Canvas canvas, Offset center, double radius) {
     shader
-      // ..setFloat(0, time)
-      ..setFloat(1, radius);
-    // ..setFloat(2, speed.x)
-    // ..setFloat(3, speed.y);
+      ..setFloat(0, game.currentTime())
+      ..setFloat(1, radius)
+      ..setFloat(2, body.linearVelocity.x)
+      ..setFloat(3, body.linearVelocity.y);
 
     canvas
       ..drawCircle(
@@ -72,11 +72,8 @@ class Ball extends BodyComponent with ContactCallbacks {
     final speeds = [contact.bodyA.linearVelocity, contact.bodyB.linearVelocity];
     final masses = [contact.bodyA.mass, contact.bodyB.mass];
     final force = speeds[0] * masses[0] + speeds[1] * masses[1];
-    print(force.length);
     if (other is Wall) {
-      other.paint = Paint()
-        ..color = Colors.red
-        ..strokeWidth = 1;
+      other.paint.color = Colors.red;
     }
 
     if (other is Ball) {
