@@ -72,6 +72,7 @@ class MouseJointWorld extends Forge2DWorld
       activeFlippers.removeAt(id);
 return;
     }
+activeFlippers.first!.returnFlipper();
 activeFlippers.clear();
   }
 
