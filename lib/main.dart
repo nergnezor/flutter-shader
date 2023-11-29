@@ -41,7 +41,7 @@ class MouseJointWorld extends Forge2DWorld
     ball = Ball(center);
     add(ball);
     addAll(flippers);
-
+    add(Ball(Vector2.all(5)));
     game.camera.viewport.add(FpsTextComponent());
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
