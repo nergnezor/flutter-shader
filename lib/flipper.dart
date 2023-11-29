@@ -15,6 +15,20 @@ class Flipper extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
+    void returnFlipper() {
+    // Reset the flipper to its original position over time until the angle is 0
+    Future.doWhile(() async {
+      await Future.delayed(Duration(milliseconds: 10));
+      if (body.angle.abs() < 0.01) {
+        body.setTransform(body.position, 0);
+        return false;
+      }
+      body
+          .setTransform(body.position, body.angle * 0.6);
+      return true;
+    });
+  }
+
   @override
   Future<void> onLoad() async {
     super.onLoad();

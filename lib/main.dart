@@ -17,7 +17,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 20));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 50));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -63,19 +63,7 @@ class MouseJointWorld extends Forge2DWorld
     });
   }
 
-  void returnFlipper(Flipper flipper) {
-    // Reset the flipper to its original position over time until the angle is 0
-    Future.doWhile(() async {
-      await Future.delayed(Duration(milliseconds: 10));
-      if (flipper.body.angle.abs() < 0.01) {
-        flipper.body.setTransform(flipper.body.position, 0);
-        return false;
-      }
-      flipper.body
-          .setTransform(flipper.body.position, flipper.body.angle * 0.6);
-      return true;
-    });
-  }
+
 
   @override
   void onDragUpdate(DragUpdateEvent info) {}
@@ -83,7 +71,8 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void onDragEnd(DragEndEvent info) {
     super.onDragEnd(info);
-    returnFlipper(activeFlipper!);
+    // returnFlipper(activeFlipper!);
+    activeFlipper!.returnFlipper();
   }
 
   @override
