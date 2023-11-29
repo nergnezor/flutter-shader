@@ -7,22 +7,12 @@ List<Wall> createBoundaries(Forge2DGame game, {double? strokeWidth}) {
   final topRight = visibleRect.topRight.toVector2();
   final bottomRight = visibleRect.bottomRight.toVector2();
   final bottomLeft = visibleRect.bottomLeft.toVector2();
-  final bottomMiddleGapRadius = 2.0;
-  final halfWidth = visibleRect.width / 2;
 
   return [
     Wall(topLeft, topRight, strokeWidth: strokeWidth),
     Wall(topRight, bottomRight, strokeWidth: strokeWidth),
     // Wall(bottomLeft, bottomRight, strokeWidth: strokeWidth),
     Wall(topLeft, bottomLeft, strokeWidth: strokeWidth),
-    Wall(
-      bottomLeft, bottomLeft + Vector2(halfWidth - bottomMiddleGapRadius, 0),
-      strokeWidth: strokeWidth,
-    ),
-    Wall(
-      bottomLeft + Vector2(halfWidth + bottomMiddleGapRadius, 0), bottomRight,
-      strokeWidth: strokeWidth,
-    ),
   ];
 }
 

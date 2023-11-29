@@ -15,26 +15,28 @@ class Flipper extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
 
-    void returnFlipper() {
+  void returnFlipper() {
+    final speed = 15.0;
+    body.angularVelocity = body.angle > 0 ? -speed : speed;
+
     // Reset the flipper to its original position over time until the angle is 0
-    Future.doWhile(() async {
-      await Future.delayed(Duration(milliseconds: 10));
-      if (body.angle.abs() < 0.01) {
-        body.setTransform(body.position, 0);
-        return false;
-      }
-      body
-          .setTransform(body.position, body.angle * 0.6);
-      return true;
-    });
+    // Future.doWhile(() async {
+    //   await Future.delayed(Duration(milliseconds: 10));
+    //   if (body.angle.abs() < 0.01) {
+    //     body.setTransform(body.position, 0);
+    //     return false;
+    //   }
+    //   body.setTransform(body.position, body.angle * 0.6);
+    //   return true;
+    // });
   }
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
     final size = game.camera.visibleWorldRect.size;
-    final y = size.height/2*0.8;
-    var x = size.width/2*0.9;
+    final y = size.height / 2 * 0.8;
+    var x = size.width / 2 * 0.9;
     if (index == 0) {
       x *= -1;
     }
@@ -45,9 +47,8 @@ class Flipper extends BodyComponent with ContactCallbacks {
 
   @override
   Body createBody() {
-
     final shape = EdgeShape();
-final flipperShape = getFlipperShape(index);
+    final flipperShape = getFlipperShape(index);
     shape.set(flipperShape[0], flipperShape[1]);
     // shape.radius = radius;
 
@@ -90,8 +91,10 @@ final flipperShape = getFlipperShape(index);
   void update(double dt) {
     super.update(dt);
 // 60 x 0.8 = 48
-    if (body.angle.abs() > pi/3*0.8) {
-      // body.setTransform(body.position, 0);
+    print(body.angle);
+    const maxAngle = pi / 3 * 0.8;
+    if (body.angle.abs() > maxAngle || body.angle.abs() < 0) {
+      body.setTransform(body.position, body.angle.clamp(0, maxAngle));
       body.angularVelocity = 0;
     }
   }
@@ -100,15 +103,15 @@ final flipperShape = getFlipperShape(index);
   void beginContact(Object other, Contact contact) {
     if (other is Ball) {}
   }
-  
+
   getFlipperShape(int index) {
     final isRight = index == 1;
     final length = 8.0;
-    var angle = pi/6; // 90 + 30 = 120 degrees
+    var angle = pi / 6; // 90 + 30 = 120 degrees
     var x = length * cos(angle);
-if (isRight) {
-  x = -x;
-}
+    if (isRight) {
+      x = -x;
+    }
     final y = length * sin(angle);
     final Vector2 start = Vector2.zero();
     final Vector2 end = Vector2(x, y);
