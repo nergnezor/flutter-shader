@@ -25,6 +25,7 @@ class MouseJointWorld extends Forge2DWorld
   late final FragmentProgram program;
   late final FragmentShader shader;
   double time = 0;
+double lastCreateBallTime = 0;
   late Ball ball;
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
@@ -93,7 +94,8 @@ activeFlippers.clear();
   void update(double dt) {
     super.update(dt);
     time += dt;
-    if ((time*1000).round() % 1000 == 0){
+    if (time-lastCreateBallTime>1.0){
+lastCreateBallTime=time;
 final v = Vector2(30 * (Random().nextDouble() - 0.5), -30);
 final b = Ball(v);
     
