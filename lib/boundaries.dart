@@ -9,7 +9,7 @@ List<Wall> createBoundaries(Forge2DGame game, {double? strokeWidth}) {
   final bottomLeft = visibleRect.bottomLeft.toVector2();
 
   return [
-    Wall(topLeft, topRight, strokeWidth: strokeWidth),
+   // Wall(topLeft, topRight, strokeWidth: strokeWidth),
     Wall(topRight, bottomRight, strokeWidth: strokeWidth),
     // Wall(bottomLeft, bottomRight, strokeWidth: strokeWidth),
     Wall(topLeft, bottomLeft, strokeWidth: strokeWidth),
