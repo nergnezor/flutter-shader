@@ -27,7 +27,7 @@ class MouseJointWorld extends Forge2DWorld
   double time = 0;
   late Ball ball;
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
- List<Flipper> activeFlippers = [];
+  List<Flipper> activeFlippers = [];
 
   @override
   Future<void> onLoad() async {
@@ -60,17 +60,17 @@ class MouseJointWorld extends Forge2DWorld
     activeFlippers.add(flipper);
   }
 
-
-
   @override
-  void onDragUpdate(DragUpdateEvent info) {
-  }
+  void onDragUpdate(DragUpdateEvent info) {}
 
   @override
   void onDragEnd(DragEndEvent info) {
     super.onDragEnd(info);
-    // returnFlipper(activeFlipper!);
-    activeFlippers.last.returnFlipper();
+    if (activeFlippers.length == 2) {
+      final id = info.pointerId % 2;
+      activeFlippers[id].returnFlipper();
+      activeFlippers.removeAt(id);
+    }
   }
 
   @override
@@ -100,7 +100,8 @@ class MouseJointWorld extends Forge2DWorld
 
   void resetBall() {
     ball.body.linearVelocity = Vector2.zero();
-    ball.body.setTransform(Vector2(0,game.camera.visibleWorldRect.top * 0.8), 0);
+    ball.body
+        .setTransform(Vector2(0, game.camera.visibleWorldRect.top * 0.8), 0);
 
     // Add random force to the ball
     Future.delayed(Duration(milliseconds: 1000), () {
