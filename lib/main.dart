@@ -1,11 +1,13 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'flipper.dart';
 
-import 'balls.dart';
+import 'ball.dart';
 import 'boundaries.dart';
 import 'package:flutter/widgets.dart';
 
@@ -15,7 +17,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(gravity: Vector2(0, 10.0), world: MouseJointWorld());
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 20));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -23,22 +25,25 @@ class MouseJointWorld extends Forge2DWorld
   late final FragmentProgram program;
   late final FragmentShader shader;
   double time = 0;
-  late List<Ball> balls;
   late Ball ball;
+  List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   late Body groundBody;
   MouseJoint? mouseJoint;
+  static const PinballDiameter = 2.7; // (cm) = 27mm
 
   @override
   Future<void> onLoad() async {
+      // ..setFloat(0, time)
+    game.camera.viewfinder.visibleGameSize = Vector2.all(20);
     super.onLoad();
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
     final center = Vector2.zero();
     groundBody = createBody(BodyDef());
-    ball = Ball(center, radius: 5);
+    ball = Ball(center, PinballDiameter / 2);
     add(ball);
-    add(Ball(center + Vector2(0, -10), radius: 5));
+    addAll(flippers);
 
     game.camera.viewport.add(FpsTextComponent());
 
@@ -62,6 +67,26 @@ class MouseJointWorld extends Forge2DWorld
       mouseJoint = MouseJoint(mouseJointDef);
       createJoint(mouseJoint!);
     }
+    // Choose flipper by side of the screen touched
+    final left = info.localPosition.x < 0;
+    final flipper = flippers[ left? 0 : 1];
+      flipper.body.angularVelocity = left? -10: 10;
+
+      // Set a timer to stop the flipper
+      Future.delayed(Duration(milliseconds: 100), () {
+        flipper.body.angularVelocity = 0;
+        // Reset the flipper to its original position over time until the angle is 0
+        Future.doWhile(() async {
+          await Future.delayed(Duration(milliseconds: 10));
+          if (flipper.body.angle.abs() < 0.01) {
+            flipper.body.setTransform(flipper.body.position, 0);
+            return false;
+          }
+          flipper.body.setTransform(flipper.body.position, flipper.body.angle * 0.9);
+          return true;
+        });
+      
+      });
   }
 
   @override

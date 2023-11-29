@@ -2,23 +2,18 @@ import 'dart:ui';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'boundaries.dart';
+import 'flipper.dart';
 
 class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
-  late Paint originalPaint;
-  bool giveNudge = false;
   final double radius;
-  final BodyType bodyType;
   final Vector2 _position;
-  double _timeSinceNudge = 0.0;
-  static const double _minNudgeRest = 2.0;
 
   Ball(
-    this._position, {
-    this.radius = 2,
-    this.bodyType = BodyType.dynamic,
-  }) {}
+    this._position, 
+    this.radius,
+  ) {}
 
   @override
   Future<void> onLoad() async {
@@ -34,7 +29,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final fixtureDef = FixtureDef(
       shape,
-      restitution: 0.8,
+      restitution: 0.3,
       friction: 0.4,
     );
 
@@ -42,7 +37,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       userData: this,
       angularDamping: 0.8,
       position: _position,
-      type: bodyType,
+      type: BodyType.dynamic,
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -64,19 +59,10 @@ class Ball extends BodyComponent with ContactCallbacks {
       );
   }
 
-  final _impulseForce = Vector2(0, 1000);
-
   @override
   @mustCallSuper
   void update(double dt) {
-    _timeSinceNudge += dt;
-    if (giveNudge) {
-      giveNudge = false;
-      if (_timeSinceNudge > _minNudgeRest) {
-        body.applyLinearImpulse(_impulseForce);
-        _timeSinceNudge = 0.0;
-      }
-    }
+    super.update(dt);
   }
 
   static const explodeForce = 10000;
