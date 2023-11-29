@@ -35,7 +35,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final bodyDef = BodyDef(
       userData: this,
-      angularDamping: 0.8,
+      //angularDamping: 0.8,
       position: _position,
       type: BodyType.dynamic,
     );
