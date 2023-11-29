@@ -57,6 +57,12 @@ class Ball extends BodyComponent with ContactCallbacks {
         radius,
         Paint()..shader = shader,
       );
+
+      // Draw a line on the ball to show its direction
+      final lineLength = radius * 2;
+      final lineStart = Offset(0, 0);
+      final lineEnd = Offset(radius, 0);
+      canvas.drawLine(lineStart, lineEnd, Paint()..color = Colors.white..strokeWidth = 0.1);
   }
 
   @override

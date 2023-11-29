@@ -54,7 +54,7 @@ final flipperShape = getFlipperShape(index);
     final fixtureDef = FixtureDef(
       shape,
       restitution: 0.5,
-      friction: 0.9,
+      friction: 0.5,
     );
 
     final bodyDef = BodyDef(
@@ -84,6 +84,15 @@ final flipperShape = getFlipperShape(index);
           ..color = const Color.fromARGB(255, 136, 54, 244)
           ..strokeWidth = 0.4,
       );
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (body.angle.abs() > pi/3) {
+      // body.setTransform(body.position, 0);
+      body.angularVelocity = 0;
+    }
   }
 
   @override

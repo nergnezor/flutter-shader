@@ -17,7 +17,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 50));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 70));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -27,7 +27,7 @@ class MouseJointWorld extends Forge2DWorld
   double time = 0;
   late Ball ball;
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
-  Flipper? activeFlipper;
+ List<Flipper> activeFlippers = [];
 
   @override
   Future<void> onLoad() async {
@@ -55,24 +55,22 @@ class MouseJointWorld extends Forge2DWorld
     // Choose flipper by side of the screen touched
     final left = info.localPosition.x < 0;
     final flipper = flippers[left ? 0 : 1];
-    flipper.body.angularVelocity = left ? -10 : 10;
-    activeFlipper = flipper;
-    // Set a timer to stop the flipper
-    Future.delayed(Duration(milliseconds: 100), () {
-      flipper.body.angularVelocity = 0;
-    });
+    final speed = 15.0;
+    flipper.body.angularVelocity = left ? -speed : speed;
+    activeFlippers.add(flipper);
   }
 
 
 
   @override
-  void onDragUpdate(DragUpdateEvent info) {}
+  void onDragUpdate(DragUpdateEvent info) {
+  }
 
   @override
   void onDragEnd(DragEndEvent info) {
     super.onDragEnd(info);
     // returnFlipper(activeFlipper!);
-    activeFlipper!.returnFlipper();
+    activeFlippers.last.returnFlipper();
   }
 
   @override
