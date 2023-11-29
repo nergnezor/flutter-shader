@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -87,8 +88,8 @@ class MouseJointWorld extends Forge2DWorld
     var rect = game.camera.visibleWorldRect;
 
     shader
-      ..setFloat(0, rect.width / scale)
-      ..setFloat(1, rect.height / scale)
+      ..setFloat(0, rect.width)
+      ..setFloat(1, rect.height)
       ..setFloat(2, time);
 
     canvas.drawRect(rect, Paint()..shader = shader);
@@ -106,14 +107,19 @@ class MouseJointWorld extends Forge2DWorld
       });
     }
   }
-  
+
   void resetBall() {
     ball.body.setTransform(Vector2.zero(), 0);
     ball.body.linearVelocity = Vector2.zero();
 
-      // Add random force to the ball
-      ball.body.applyLinearImpulse(
-        Vector2.random() * 10,
-      );
+    // Add random force to the ball
+    Future.delayed(Duration(milliseconds: 1000), () {
+      addRandomForce();
+    });
+  }
+  
+  void addRandomForce() {
+    final force = Vector2(5*(Random().nextDouble() - 0.5), 0);
+    ball.body.applyLinearImpulse(force);
   }
 }

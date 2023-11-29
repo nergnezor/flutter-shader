@@ -39,7 +39,7 @@ final flipperShape = getFlipperShape(index);
 
     final fixtureDef = FixtureDef(
       shape,
-      restitution: 0,
+      restitution: 0.5,
       friction: 0.9,
     );
 
