@@ -1,10 +1,6 @@
-// import 'package:examples/stories/bridge_libraries/flame_forge2d/utils/boundaries.dart';
 import 'dart:ui';
-
-import 'package:flame/palette.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
-
 import 'boundaries.dart';
 
 class Ball extends BodyComponent with ContactCallbacks {
@@ -18,23 +14,11 @@ class Ball extends BodyComponent with ContactCallbacks {
   double _timeSinceNudge = 0.0;
   static const double _minNudgeRest = 2.0;
 
-  final Paint _blue = BasicPalette.blue.paint();
-
   Ball(
     this._position, {
     this.radius = 2,
     this.bodyType = BodyType.dynamic,
-    Color? color,
-  }) {
-    if (color != null) {
-      originalPaint = PaletteEntry(color).paint();
-    } else {
-      originalPaint = randomPaint();
-    }
-    paint = originalPaint;
-  }
-
-  Paint randomPaint() => PaintExtension.random(withAlpha: 0.9, base: 100);
+  }) {}
 
   @override
   Future<void> onLoad() async {
@@ -66,10 +50,6 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   void renderCircle(Canvas canvas, Offset center, double radius) {
-    // super.renderCircle(canvas, center, radius);
-    // final lineRotation = Offset(0, radius);
-    // canvas.drawLine(center, center + lineRotation, _blue);
-    // final radius = fixtureDefs!.first.shape.radius;
     shader
       // ..setFloat(0, time)
       ..setFloat(1, radius);
@@ -99,36 +79,27 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
   }
 
+  static const explodeForce = 10000;
   @override
   void beginContact(Object other, Contact contact) {
+// Calculate impulse (force) on the ball
+    final speeds = [contact.bodyA.linearVelocity, contact.bodyB.linearVelocity];
+    final masses = [contact.bodyA.mass, contact.bodyB.mass];
+    final force = speeds[0] * masses[0] + speeds[1] * masses[1];
+    print(force.length);
     if (other is Wall) {
-      other.paint = paint;
-    }
-
-    if (other is WhiteBall) {
-      return;
+      other.paint = Paint()
+        ..color = Colors.red
+        ..strokeWidth = 1;
     }
 
     if (other is Ball) {
-      if (paint != originalPaint) {
-        paint = other.paint;
-      } else {
-        other.paint = paint;
+      if (force.length > explodeForce) {
+        // Explode the ball
+        Future.delayed(Duration(milliseconds: 1), () {
+          world.remove(this);
+        });
       }
-    }
-  }
-}
-
-class WhiteBall extends Ball with ContactCallbacks {
-  WhiteBall(super.position) {
-    originalPaint = BasicPalette.white.paint();
-    paint = originalPaint;
-  }
-
-  @override
-  void beginContact(Object other, Contact contact) {
-    if (other is Ball) {
-      other.giveNudge = true;
     }
   }
 }
