@@ -21,6 +21,6 @@ void draw_tunnel(float center_distance, float time, out vec4 color)
 
 void main()
 {
-    float center_distance_percentage = length(FlutterFragCoord().xy) / length(resolution);
-    draw_tunnel(center_distance_percentage, time, fragColor);
+    // float center_distance_percentage = length(FlutterFragCoord().xy) / length(resolution);
+    // draw_tunnel(center_distance_percentage, time, fragColor);
 }

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,9 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final double radius;
   final bool isFirstBall;
   double life = 1.0;
-
+  Vector2 _position = Vector2.zero();
+  late TextComponent lifeText =
+      TextComponent(text: life.toString(), position: Vector2(0, 20));
   Ball({this.isFirstBall = false}) {}
 
   void resetBall() {
@@ -52,7 +55,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     final bodyDef = BodyDef(
       userData: this,
       gravityOverride: isFirstBall ? null : Vector2(0, 1),
-      position: Vector2(0, game.camera.visibleWorldRect.top * 1.2),
+      position: Vector2(0, game.camera.visibleWorldRect.top * 1.0),
       type: BodyType.dynamic,
     );
 
@@ -94,6 +97,8 @@ class Ball extends BodyComponent with ContactCallbacks {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1), () {
         if (isFirstBall) {
+          life -= 0.1;
+          // game.lifeText.text = 'Life: ${life.toStringAsFixed(2)}';
           resetBall();
         } else {
           world.remove(this);
