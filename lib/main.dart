@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'flipper.dart';
@@ -43,13 +44,14 @@ class MouseJointWorld extends Forge2DWorld
     add(ball);
     addAll(flippers);
     game.camera.viewport.add(FpsTextComponent());
+    var lifetextPos = Vector2(0, 20);
+    game.camera.viewport
+        .add(TextComponent(text: ball.life.toString(), position: lifetextPos));
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
 
-    // if (isFirstBall) {
     game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
-    // }
   }
 
   @override
@@ -101,10 +103,11 @@ class MouseJointWorld extends Forge2DWorld
     const cameraSpeed = 2;
     final screenYOffset =
         -ball.body.position.y - game.camera.visibleWorldRect.height / 2;
-        
+
     if (screenYOffset > 0) {
       camera.y -= screenYOffset * 2;
-      camera.y = max(camera.y, ball.body.position.y+game.camera.visibleWorldRect.height/2);
+      camera.y = max(camera.y,
+          ball.body.position.y + game.camera.visibleWorldRect.height / 2);
     } else if (camera.y < 0) {
       camera.y = 0;
     }
