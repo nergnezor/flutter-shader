@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:flame/effects.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'boundaries.dart';
@@ -8,9 +9,10 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
-  static const EnemyBallDiameter = 4.0;
+  static const EnemyBallDiameter = 8.0;
   late final double radius;
   final bool isFirstBall;
+  double life = 1.0;
 
   Ball({this.isFirstBall = false}) {}
 
@@ -33,7 +35,6 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
-    
   }
 
   @override
@@ -51,9 +52,8 @@ class Ball extends BodyComponent with ContactCallbacks {
     final bodyDef = BodyDef(
       userData: this,
       gravityOverride: isFirstBall ? null : Vector2(0, 1),
-      position: Vector2(0, game.camera.visibleWorldRect.top * 0.8),
+      position: Vector2(0, game.camera.visibleWorldRect.top * 1.2),
       type: BodyType.dynamic,
-      
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -65,7 +65,8 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(0, game.currentTime())
       ..setFloat(1, radius)
       ..setFloat(2, body.linearVelocity.x)
-      ..setFloat(3, body.linearVelocity.y);
+      ..setFloat(3, body.linearVelocity.y)
+      ..setFloat(4, life);
 
     canvas
       ..drawCircle(
@@ -76,7 +77,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     // Draw a line on the ball to show its direction
     final lineStart = Offset(0, 0);
-    final lineEnd = Offset(radius, 0);
+    final lineEnd = Offset(radius*max(life,0), 0);
     canvas.drawLine(
         lineStart,
         lineEnd,
@@ -99,6 +100,10 @@ class Ball extends BodyComponent with ContactCallbacks {
         }
       });
     }
+    if (life < 0) {
+      body.setActive(false);
+      grow(dt*10);
+    }
   }
 
   static const explodeForce = 1000;
@@ -113,13 +118,24 @@ class Ball extends BodyComponent with ContactCallbacks {
       return;
     }
 
-    if (!isFirstBall ) {
-      if (force.length > explodeForce) {
-        // Explode the ball
-        Future.delayed(Duration(milliseconds: 1), () {
-          world.remove(this);
-        });
+    if (!isFirstBall && other is Ball) {
+      final lifeDrain = force.length / explodeForce;
+      life -= lifeDrain;
+      grow(lifeDrain);
+      if (life < 0) {
+        // First spin the ball
+        body.applyAngularImpulse(100);
       }
+    }
+  }
+
+  void grow(double amount) {
+    final shape = body.fixtures.first.shape as CircleShape;
+    final scale = 1 + amount;
+    shape.radius = shape.radius * scale;
+    const maxScale = 50;
+    if (shape.radius > maxScale) {
+      world.remove(this);
     }
   }
 }

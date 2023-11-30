@@ -3,13 +3,14 @@
 uniform float time;
 uniform float radius;
 uniform vec2 speed;
+uniform float life;
 out vec4 fragColor;
 
 vec4 calculateColor(float center_distance, float radius, float time)
 {
-  float red = pow(7 * sin(time) / 8, 2);
+  float red = 100000*sin(time/8) ;
   float green = pow(center_distance, 3);
-  float blue = 0.4 + pow(red, 4);
+  float blue = 0.4 ;
   return vec4(red, green, blue, 0.8);
 }
 
