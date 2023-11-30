@@ -33,6 +33,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
+    
   }
 
   @override
@@ -42,15 +43,17 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final fixtureDef = FixtureDef(
       shape,
-      restitution: 0.1,
+      restitution: isFirstBall ? 0.1 : 0.0,
       friction: 0.2,
+      density: 1,
     );
 
     final bodyDef = BodyDef(
       userData: this,
-      gravityOverride: isFirstBall ? null : Vector2(0, 10),
+      gravityOverride: isFirstBall ? null : Vector2(0, 1),
       position: Vector2(0, game.camera.visibleWorldRect.top * 0.8),
       type: BodyType.dynamic,
+      
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -72,7 +75,6 @@ class Ball extends BodyComponent with ContactCallbacks {
       );
 
     // Draw a line on the ball to show its direction
-    final lineLength = radius * 2;
     final lineStart = Offset(0, 0);
     final lineEnd = Offset(radius, 0);
     canvas.drawLine(
@@ -99,7 +101,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
   }
 
-  static const explodeForce = 10000;
+  static const explodeForce = 1000;
   @override
   void beginContact(Object other, Contact contact) {
 // Calculate impulse (force) on the ball
@@ -108,9 +110,10 @@ class Ball extends BodyComponent with ContactCallbacks {
     final force = speeds[0] * masses[0] + speeds[1] * masses[1];
     if (other is Wall) {
       other.paint.color = Colors.red;
+      return;
     }
 
-    if (other is Ball) {
+    if (!isFirstBall ) {
       if (force.length > explodeForce) {
         // Explode the ball
         Future.delayed(Duration(milliseconds: 1), () {

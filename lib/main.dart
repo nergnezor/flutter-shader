@@ -17,7 +17,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 70));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 100));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -34,7 +34,7 @@ class MouseJointWorld extends Forge2DWorld
   @override
   Future<void> onLoad() async {
     // ..setFloat(0, time)
-    game.camera.viewfinder.visibleGameSize = Vector2.all(20);
+    game.camera.viewfinder.visibleGameSize = Vector2.all(30);
     super.onLoad();
     final boundaries = createBoundaries(game);
     addAll(boundaries);
@@ -109,12 +109,9 @@ class MouseJointWorld extends Forge2DWorld
       camera.y = 0;
     }
 
-    if (time - lastCreateBallTime > 30.0) {
+    if (time - lastCreateBallTime > 5.0) {
       lastCreateBallTime = time;
-      final v = Vector2(30 * (Random().nextDouble() - 0.5), -30);
-      final b = Ball();
-
-      add(b);
+      add(Ball());
     }
   }
 }
