@@ -51,7 +51,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final bodyDef = BodyDef(
       userData: this,
-      gravityOverride: isFirstBall ? Vector2(0, -1) : Vector2(0, 1),
+      gravityOverride: isFirstBall ? null : Vector2(0, 1),
       position: Vector2(0, game.camera.visibleWorldRect.top * 1.2),
       type: BodyType.dynamic,
     );
