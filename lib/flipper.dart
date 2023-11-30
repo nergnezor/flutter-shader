@@ -12,8 +12,8 @@ class Flipper extends BodyComponent with ContactCallbacks {
   ) {}
 
   late final Vector2 _position;
-  late final FragmentProgram _program;
-  late final FragmentShader shader;
+  // late final FragmentProgram _program;
+  // late final FragmentShader shader;
 
   void returnFlipper() {
     final speed = 15.0;
@@ -41,8 +41,8 @@ class Flipper extends BodyComponent with ContactCallbacks {
       x *= -1;
     }
     _position = Vector2(x, y);
-    _program = await FragmentProgram.fromAsset('shaders/shader.frag');
-    shader = _program.fragmentShader();
+    // _program = await FragmentProgram.fromAsset('shaders/shader.frag');
+    // shader = _program.fragmentShader();
   }
 
   @override
@@ -91,13 +91,12 @@ class Flipper extends BodyComponent with ContactCallbacks {
   void update(double dt) {
     super.update(dt);
 // 60 x 0.8 = 48
-    print(body.angle);
     var maxAngle = pi / 3 * 0.8;
     var minAngle = 0.0;
-if (index == 0){
-  minAngle = -maxAngle;
-  maxAngle = 0;
-}
+    if (index == 0) {
+      minAngle = -maxAngle;
+      maxAngle = 0;
+    }
     if (body.angle > maxAngle || body.angle < minAngle) {
       body.setTransform(body.position, body.angle.clamp(minAngle, maxAngle));
       body.angularVelocity = 0;

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +10,26 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
   final double radius = PinballDiameter / 2;
-  final Vector2 _position;
+  final bool isFirstBall;
 
-  Ball(
-    this._position,
-  ) {}
+  Ball({this.isFirstBall = false}) {}
+
+  void resetBall() {
+    body.linearVelocity = Vector2.zero();
+    body.setTransform(
+        Vector2(30 * (Random().nextDouble() - 0.5),
+            game.camera.visibleWorldRect.top * 1.1),
+        0);
+
+    // Add random force to the ball
+    Future.delayed(Duration(milliseconds: 1000), () {});
+  }
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    _program = await FragmentProgram.fromAsset('shaders/shader.frag');
+    final shaderName = isFirstBall ? 'player' : 'enemy';
+    _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
   }
 
@@ -30,13 +41,13 @@ class Ball extends BodyComponent with ContactCallbacks {
     final fixtureDef = FixtureDef(
       shape,
       restitution: 0.1,
-      friction: 0.4,
+      friction: 0.2,
     );
 
     final bodyDef = BodyDef(
       userData: this,
-      //angularDamping: 0.8,
-      position: _position,
+      gravityOverride: isFirstBall ? null : Vector2(0, 10),
+      position: Vector2(0, game.camera.visibleWorldRect.top * 0.8),
       type: BodyType.dynamic,
     );
 
@@ -58,17 +69,32 @@ class Ball extends BodyComponent with ContactCallbacks {
         Paint()..shader = shader,
       );
 
-      // Draw a line on the ball to show its direction
-      final lineLength = radius * 2;
-      final lineStart = Offset(0, 0);
-      final lineEnd = Offset(radius, 0);
-      canvas.drawLine(lineStart, lineEnd, Paint()..color = Colors.white..strokeWidth = 0.1);
+    // Draw a line on the ball to show its direction
+    final lineLength = radius * 2;
+    final lineStart = Offset(0, 0);
+    final lineEnd = Offset(radius, 0);
+    canvas.drawLine(
+        lineStart,
+        lineEnd,
+        Paint()
+          ..color = Colors.white
+          ..strokeWidth = 0.1);
   }
 
   @override
   @mustCallSuper
   void update(double dt) {
     super.update(dt);
+    if (body.position.y > game.camera.visibleWorldRect.bottom) {
+// Add some delay before resetting the ball
+      Future.delayed(Duration(milliseconds: 1), () {
+        if (isFirstBall) {
+          resetBall();
+        } else {
+          world.remove(this);
+        }
+      });
+    }
   }
 
   static const explodeForce = 10000;

@@ -25,7 +25,7 @@ class MouseJointWorld extends Forge2DWorld
   late final FragmentProgram program;
   late final FragmentShader shader;
   double time = 0;
-double lastCreateBallTime = 0;
+  double lastCreateBallTime = 0;
   late Ball ball;
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
@@ -38,11 +38,9 @@ double lastCreateBallTime = 0;
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
-    final center = Vector2.zero();
-    ball = Ball(center);
+    ball = Ball(isFirstBall: true);
     add(ball);
     addAll(flippers);
-    add(Ball(Vector2.all(5)));
     game.camera.viewport.add(FpsTextComponent());
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
@@ -71,10 +69,10 @@ double lastCreateBallTime = 0;
       final id = info.pointerId % 2;
       activeFlippers[id].returnFlipper();
       activeFlippers.removeAt(id);
-return;
+      return;
     }
-activeFlippers.first!.returnFlipper();
-activeFlippers.clear();
+    activeFlippers.first!.returnFlipper();
+    activeFlippers.clear();
   }
 
   @override
@@ -94,34 +92,12 @@ activeFlippers.clear();
   void update(double dt) {
     super.update(dt);
     time += dt;
-    if (time-lastCreateBallTime>1.0){
-lastCreateBallTime=time;
-final v = Vector2(30 * (Random().nextDouble() - 0.5), -30);
-final b = Ball(v);
-    
-add(b);
-}
-    if (ball.body.position.y > game.camera.visibleWorldRect.bottom) {
-// Add some delay before resetting the ball
-      Future.delayed(Duration(milliseconds: 1000), () {
-        resetBall();
-      });
+    if (time - lastCreateBallTime > 1.0) {
+      lastCreateBallTime = time;
+      final v = Vector2(30 * (Random().nextDouble() - 0.5), -30);
+      final b = Ball();
+
+      add(b);
     }
-  }
-
-  void resetBall() {
-    ball.body.linearVelocity = Vector2.zero();
-    ball.body
-        .setTransform(Vector2(0, game.camera.visibleWorldRect.top * 0.8), 0);
-
-    // Add random force to the ball
-    Future.delayed(Duration(milliseconds: 1000), () {
-      addRandomForce();
-    });
-  }
-
-  void addRandomForce() {
-    final force = Vector2(30 * (Random().nextDouble() - 0.5), 0);
-    ball.body.applyLinearImpulse(force);
   }
 }
