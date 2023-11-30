@@ -48,7 +48,7 @@ class MouseJointWorld extends Forge2DWorld
     shader = program.fragmentShader();
 
     // if (isFirstBall) {
-    game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 30);
+    game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
     // }
   }
 
@@ -59,8 +59,7 @@ class MouseJointWorld extends Forge2DWorld
     // Choose flipper by side of the screen touched
     final left = info.localPosition.x < 0;
     final flipper = flippers[left ? 0 : 1];
-    final speed = 15.0;
-    flipper.body.angularVelocity = left ? -speed : speed;
+    flipper.activate();
     activeFlippers.add(flipper);
   }
 
@@ -100,10 +99,12 @@ class MouseJointWorld extends Forge2DWorld
 
 // Move the camera up if the ball is at the top of the screen
     const cameraSpeed = 2;
-    final screenOffset =
+    final screenYOffset =
         -ball.body.position.y - game.camera.visibleWorldRect.height / 2;
-    if (screenOffset > 0) {
-      camera.y -= screenOffset * 2;
+        
+    if (screenYOffset > 0) {
+      camera.y -= screenYOffset * 2;
+      camera.y = max(camera.y, ball.body.position.y+game.camera.visibleWorldRect.height/2);
     } else if (camera.y < 0) {
       camera.y = 0;
     }
