@@ -3,13 +3,15 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 
 List<Wall> createBoundaries(Forge2DGame game, {double? strokeWidth}) {
   final visibleRect = game.camera.visibleWorldRect;
-  final topLeft = visibleRect.topLeft.toVector2();
-  final topRight = visibleRect.topRight.toVector2();
+  // final topLeft = visibleRect.topLeft.toVector2();
+  final topLeft = Vector2(visibleRect.left, -100);
+  // final topRight = visibleRect.topRight.toVector2();
+  final topRight = Vector2(visibleRect.right, -100);
   final bottomRight = visibleRect.bottomRight.toVector2();
   final bottomLeft = visibleRect.bottomLeft.toVector2();
 
   return [
-   // Wall(topLeft, topRight, strokeWidth: strokeWidth),
+    // Wall(topLeft, topRight, strokeWidth: strokeWidth),
     Wall(topRight, bottomRight, strokeWidth: strokeWidth),
     // Wall(bottomLeft, bottomRight, strokeWidth: strokeWidth),
     Wall(topLeft, bottomLeft, strokeWidth: strokeWidth),

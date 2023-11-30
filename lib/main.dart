@@ -29,6 +29,7 @@ class MouseJointWorld extends Forge2DWorld
   late Ball ball;
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
+  PositionComponent camera = PositionComponent();
 
   @override
   Future<void> onLoad() async {
@@ -45,6 +46,10 @@ class MouseJointWorld extends Forge2DWorld
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
+
+    // if (isFirstBall) {
+    game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 30);
+    // }
   }
 
   @override
@@ -92,7 +97,18 @@ class MouseJointWorld extends Forge2DWorld
   void update(double dt) {
     super.update(dt);
     time += dt;
-    if (time - lastCreateBallTime > 1.0) {
+
+// Move the camera up if the ball is at the top of the screen
+    const cameraSpeed = 2;
+    final screenOffset =
+        -ball.body.position.y - game.camera.visibleWorldRect.height / 2;
+    if (screenOffset > 0) {
+      camera.y -= screenOffset * 2;
+    } else if (camera.y < 0) {
+      camera.y = 0;
+    }
+
+    if (time - lastCreateBallTime > 30.0) {
       lastCreateBallTime = time;
       final v = Vector2(30 * (Random().nextDouble() - 0.5), -30);
       final b = Ball();

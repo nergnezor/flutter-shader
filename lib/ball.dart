@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'boundaries.dart';
-import 'flipper.dart';
 
 class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
-  final double radius = PinballDiameter / 2;
+  static const EnemyBallDiameter = 4.0;
+  late final double radius;
   final bool isFirstBall;
 
   Ball({this.isFirstBall = false}) {}
@@ -18,7 +18,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     body.linearVelocity = Vector2.zero();
     body.setTransform(
         Vector2(30 * (Random().nextDouble() - 0.5),
-            game.camera.visibleWorldRect.top * 1.1),
+            game.camera.visibleWorldRect.top * 1.0),
         0);
 
     // Add random force to the ball
@@ -29,6 +29,8 @@ class Ball extends BodyComponent with ContactCallbacks {
   Future<void> onLoad() async {
     super.onLoad();
     final shaderName = isFirstBall ? 'player' : 'enemy';
+    radius = isFirstBall ? PinballDiameter / 2 : EnemyBallDiameter / 2;
+
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
   }
@@ -85,7 +87,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   @mustCallSuper
   void update(double dt) {
     super.update(dt);
-    if (body.position.y > game.camera.visibleWorldRect.bottom) {
+    if (body.position.y > game.camera.visibleWorldRect.height / 2) {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1), () {
         if (isFirstBall) {
