@@ -59,7 +59,6 @@ class MouseJointWorld extends Forge2DWorld
     add(ball);
     addAll(flippers);
     game.camera.viewport.add(FpsTextComponent());
-    game.camera.viewport.add(ball.lifeText);
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
@@ -112,7 +111,6 @@ class MouseJointWorld extends Forge2DWorld
     time += dt;
 
 // Move the camera up if the ball is at the top of the screen
-    const cameraSpeed = 2;
     final screenYOffset =
         -ball.body.position.y - game.camera.visibleWorldRect.height / 2;
 
@@ -124,9 +122,9 @@ class MouseJointWorld extends Forge2DWorld
       camera.y = 0;
     }
 
-    if (time - lastCreateBallTime > 5.0) {
-      lastCreateBallTime = time;
-      add(Ball());
-    }
+    // if (time - lastCreateBallTime > 5.0) {
+    //   lastCreateBallTime = time;
+    //   add(Ball());
+    // }
   }
 }

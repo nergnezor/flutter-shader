@@ -15,8 +15,8 @@ class Ball extends BodyComponent with ContactCallbacks {
   final bool isFirstBall;
   double life = 1.0;
   Vector2 _position = Vector2.zero();
-  late TextComponent lifeText =
-      TextComponent(text: life.toString(), position: Vector2(0, 20));
+  late TextComponent lifeText = TextComponent(
+      text: (life * 100).round().toString(), position: Vector2(0, 20));
   Ball({this.isFirstBall = false}) {}
 
   void resetBall() {
@@ -38,6 +38,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
+    game.camera.viewport.add(lifeText);
   }
 
   @override
@@ -69,7 +70,9 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(1, radius)
       ..setFloat(2, body.linearVelocity.x)
       ..setFloat(3, body.linearVelocity.y)
-      ..setFloat(4, life);
+      ..setFloat(4, life)
+      ..setFloat(5, radius * 2)
+      ..setFloat(6, radius * 2);
 
     canvas
       ..drawCircle(
@@ -77,7 +80,6 @@ class Ball extends BodyComponent with ContactCallbacks {
         radius,
         Paint()..shader = shader,
       );
-
     // Draw a line on the ball to show its direction
     final lineStart = Offset(0, 0);
     final lineEnd = Offset(radius * max(life, 0), 0);
@@ -98,7 +100,9 @@ class Ball extends BodyComponent with ContactCallbacks {
       Future.delayed(Duration(milliseconds: 1), () {
         if (isFirstBall) {
           life -= 0.1;
-          // game.lifeText.text = 'Life: ${life.toStringAsFixed(2)}';
+          lifeText.text = (life * 100).round().toString();
+          // world.remove(lifeText);
+          // world.add(lifeText);
           resetBall();
         } else {
           world.remove(this);
@@ -141,6 +145,9 @@ class Ball extends BodyComponent with ContactCallbacks {
     const maxScale = 50;
     if (shape.radius > maxScale) {
       world.remove(this);
+      if (isFirstBall) {
+        world.add(Ball(isFirstBall: true));
+      }
     }
   }
 }
