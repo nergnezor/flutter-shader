@@ -13,7 +13,8 @@ class Flipper extends BodyComponent with ContactCallbacks {
 
   late final Vector2 _position;
   static const FlipperMaxAngle = 52.0;
-  static const FlipperLength = 12.0;
+  static const FlipperLength = 6.1;
+  static const RubberThickness = 0.4;
   final speed = 10.0;
   double scale = 1.0;
 
@@ -78,7 +79,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
         // Paint()..shader = shader,
         Paint()
           ..color = Color.fromARGB(255, 244, 241, 54)
-          ..strokeWidth = 0.2
+          ..strokeWidth = RubberThickness
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round,
       );

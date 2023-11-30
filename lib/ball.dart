@@ -9,7 +9,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
-  static const EnemyBallDiameter = 8.0;
+  static const EnemyBallDiameter = 6.0;
   late final double radius;
   final bool isFirstBall;
   double life = 1.0;
@@ -77,7 +77,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     // Draw a line on the ball to show its direction
     final lineStart = Offset(0, 0);
-    final lineEnd = Offset(radius*max(life,0), 0);
+    final lineEnd = Offset(radius * max(life, 0), 0);
     canvas.drawLine(
         lineStart,
         lineEnd,
@@ -102,7 +102,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
     if (life < 0) {
       body.setActive(false);
-      grow(dt*10);
+      grow(dt * 10);
     }
   }
 
