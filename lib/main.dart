@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/services.dart';
 import 'flipper.dart';
 
 import 'ball.dart';
@@ -22,7 +23,7 @@ class MouseJointExample extends Forge2DGame {
 }
 
 class MouseJointWorld extends Forge2DWorld
-    with DragCallbacks, HasGameReference<Forge2DGame> {
+    with DragCallbacks, HasGameReference<Forge2DGame>, KeyboardHandler {
   late final FragmentProgram program;
   late final FragmentShader shader;
   double time = 0;
@@ -31,6 +32,19 @@ class MouseJointWorld extends Forge2DWorld
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
   PositionComponent camera = PositionComponent();
+// Check keyboard input from KeyboardHandler
+  @override
+  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keys) {
+    // Check left/right arrow keys
+    if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+      flippers[0].activate();
+      return true;
+    } else if (event.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
+      flippers[1].activate();
+      return true;
+    }
+    return false;
+  }
 
   @override
   Future<void> onLoad() async {
