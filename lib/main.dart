@@ -32,6 +32,7 @@ class MouseJointWorld extends Forge2DWorld
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
   PositionComponent camera = PositionComponent();
+  TextComponent lifeText = TextComponent(text: '100');
 // Check keyboard input from KeyboardHandler
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keys) {
@@ -97,7 +98,6 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
-    final scale = game.camera.viewfinder.scale.x;
     var rect = game.camera.visibleWorldRect;
 
     shader
