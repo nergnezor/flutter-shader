@@ -10,7 +10,7 @@ void mainImage(out vec4 O, vec2 I)
     // Draw a sphere in the center of the screen.
     if (percent.x < 0.5)
     {
-        O = vec4(1, 0, 0, 1);
+        O = vec4(0.5);
         return;
     }
     vec3 col = 0.1 * (1 + sin(iTime / 10 + percent.y + vec3(4, 3, 2)));

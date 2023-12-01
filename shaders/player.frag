@@ -25,8 +25,8 @@ void fillLife(out vec4 fragColor, in vec2 fragCoord)
   float fillHeight2 = life + 0.06 * sin(fragCoord.x * 3 + iTime * 3) * sin(iTime * 4);
   if (y < fillHeight2)
   {
-    float b = 0.9;
-    color += vec4(b / 3, b, b, 0.3);
+    float b = 1.0;
+    color *= vec4(b / 3, b, b, 1);
   }
 
   fragColor = color;
