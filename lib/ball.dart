@@ -15,8 +15,6 @@ class Ball extends BodyComponent with ContactCallbacks {
   final bool isFirstBall;
   double life = 1.0;
   Vector2 _position = Vector2.zero();
-  late TextComponent lifeText = TextComponent(
-      text: (life * 100).round().toString(), position: Vector2(0, 20));
   Ball({this.isFirstBall = false}) {}
 
   void resetBall() {
@@ -38,7 +36,6 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
-    game.camera.viewport.add(lifeText);
   }
 
   @override
@@ -70,9 +67,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(1, radius)
       ..setFloat(2, body.linearVelocity.x)
       ..setFloat(3, body.linearVelocity.y)
-      ..setFloat(4, life)
-      ..setFloat(5, radius * 2)
-      ..setFloat(6, radius * 2);
+      ..setFloat(4, life);
 
     canvas
       ..drawCircle(
@@ -100,7 +95,6 @@ class Ball extends BodyComponent with ContactCallbacks {
       Future.delayed(Duration(milliseconds: 1), () {
         if (isFirstBall) {
           life -= 0.1;
-          lifeText.text = (life * 100).round().toString();
           // world.remove(lifeText);
           // world.add(lifeText);
           resetBall();

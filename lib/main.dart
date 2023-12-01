@@ -32,7 +32,7 @@ class MouseJointWorld extends Forge2DWorld
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
   PositionComponent camera = PositionComponent();
-
+  TextComponent lifeText = TextComponent(text: "100", position: Vector2(0, 20));
 // Check keyboard input from KeyboardHandler
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keys) {
@@ -59,6 +59,7 @@ class MouseJointWorld extends Forge2DWorld
     add(ball);
     addAll(flippers);
     game.camera.viewport.add(FpsTextComponent());
+    game.camera.viewport.add(lifeText);
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
@@ -109,6 +110,7 @@ class MouseJointWorld extends Forge2DWorld
   void update(double dt) {
     super.update(dt);
     time += dt;
+    lifeText.text = (ball.life * 100).round().toString();
 
 // Move the camera up if the ball is at the top of the screen
     final screenYOffset =
@@ -122,9 +124,9 @@ class MouseJointWorld extends Forge2DWorld
       camera.y = 0;
     }
 
-    // if (time - lastCreateBallTime > 5.0) {
-    //   lastCreateBallTime = time;
-    //   add(Ball());
-    // }
+    if (time - lastCreateBallTime > 5.0) {
+      lastCreateBallTime = time;
+      add(Ball());
+    }
   }
 }
