@@ -19,19 +19,16 @@ void fillLife(out vec4 fragColor, in vec2 fragCoord)
   if (y < fillHeight)
   {
     float r = 0.1 + 0.5 * life;
-    color = vec4(r / 2, r / 2, r, 0.3);
+    color = vec4(r, r / 2, r, 0.3);
   }
-  else
-  // Second wave
+
+  float fillHeight2 = life + 0.06 * sin(fragCoord.x * 3 + iTime * 3) * sin(iTime * 4);
+  if (y < fillHeight2)
   {
-    float y2 = (fragCoord.y + radius) / (2.0 * radius);
-    y2 += 0.05 * sin(fragCoord.x * 4 + iTime * 4) * sin(iTime * 4);
-    if (y2 < fillHeight)
-    {
-      float b = 0.9;
-      color = vec4(b / 3, b / 2, b, 0.3);
-    }
+    float b = 0.9;
+    color += vec4(b / 3, b, b, 0.3);
   }
+
   fragColor = color;
 }
 
