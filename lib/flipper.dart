@@ -16,7 +16,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
   static const FlipperMaxAngle = 52.0;
   static const FlipperLength = 7.1;
   static const RubberThickness = 0.4;
-  final speed = 10.0;
+  final speed = 5.0;
   double scale = 1.0;
 
   void activate() {
@@ -100,31 +100,31 @@ class Flipper extends BodyComponent with ContactCallbacks {
       body.setTransform(body.position, body.angle.clamp(minAngle, maxAngle));
       body.angularVelocity = 0;
     }
-    if (scale < 1) {
-      setScale(1.001);
-    }
+    // if (scale < 1) {
+    //   setScale(1.001);
+    // }
   }
 
-  @override
-  void beginContact(Object other, Contact contact) {
-    if (other is Ball && other.isFirstBall) return;
-    // Decrease the length of the flipper
-    setScale(0.9);
-  }
+  // @override
+  // void beginContact(Object other, Contact contact) {
+  //   if (other is Ball && other.isFirstBall) return;
+  //   // Decrease the length of the flipper
+  //   setScale(0.9);
+  // }
 
-  void setScale(double s) {
-    scale = scale * s;
-    const maxScale = 1.0;
-    const minScale = 0.1;
-    if (scale > maxScale || scale < minScale) {
-      scale = scale.clamp(0.1, 1.0);
-      return;
-    }
+  // void setScale(double s) {
+  //   scale = scale * s;
+  //   const maxScale = 1.0;
+  //   const minScale = 0.1;
+  //   if (scale > maxScale || scale < minScale) {
+  //     scale = scale.clamp(0.1, 1.0);
+  //     return;
+  //   }
 
-    final shape = body.fixtures.first.shape as EdgeShape;
-    // final newLength = FlipperLength * scale;
-    shape.set(shape.vertex1, shape.vertex2..scale(s));
-  }
+  //   final shape = body.fixtures.first.shape as EdgeShape;
+  //   // final newLength = FlipperLength * scale;
+  //   shape.set(shape.vertex1, shape.vertex2..scale(s));
+  // }
 
   getFlipperShape(int index) {
     final isRight = index == 1;

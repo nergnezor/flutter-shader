@@ -96,7 +96,7 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
-    var rect = game.camera.visibleWorldRect;
+    final rect = canvas.getLocalClipBounds();
 
     shader
       ..setFloat(0, rect.width)

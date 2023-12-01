@@ -14,18 +14,11 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final double radius;
   final bool isFirstBall;
   double life = 1.0;
-  Vector2 _position = Vector2.zero();
+  Vector2 _position = Vector2(0, -20);
   Ball({this.isFirstBall = false}) {}
 
-  void resetBall() {
-    body.linearVelocity = Vector2.zero();
-    body.setTransform(
-        Vector2(30 * (Random().nextDouble() - 0.5),
-            game.camera.visibleWorldRect.top * 1.0),
-        0);
-
-    // Add random force to the ball
-    Future.delayed(Duration(milliseconds: 1000), () {});
+  void reset() {
+    body = createBody();
   }
 
   @override
@@ -36,6 +29,10 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
+
+    _position.y = -game.camera.visibleWorldRect.height / 2 * 0.8;
+    _position.x =
+        isFirstBall ? -game.camera.visibleWorldRect.width / 2 * 0.8 : 0;
   }
 
   @override
@@ -52,8 +49,8 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final bodyDef = BodyDef(
       userData: this,
-      gravityOverride: isFirstBall ? null : Vector2(0, 1),
-      position: Vector2(0, game.camera.visibleWorldRect.top * 1.0),
+      gravityOverride: isFirstBall ? Vector2(0, 10) : Vector2(0, 1),
+      position: _position,
       type: BodyType.dynamic,
     );
 
@@ -97,7 +94,7 @@ class Ball extends BodyComponent with ContactCallbacks {
           life -= 0.1;
           // world.remove(lifeText);
           // world.add(lifeText);
-          resetBall();
+          reset();
         } else {
           world.remove(this);
         }
@@ -138,10 +135,12 @@ class Ball extends BodyComponent with ContactCallbacks {
     shape.radius = shape.radius * scale;
     const maxScale = 50;
     if (shape.radius > maxScale) {
-      world.remove(this);
       if (isFirstBall) {
-        world.add(Ball(isFirstBall: true));
+        reset();
+        life = 1;
+        return;
       }
+      world.remove(this);
     }
   }
 }
