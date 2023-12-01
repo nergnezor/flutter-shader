@@ -14,6 +14,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final double radius;
   final bool isFirstBall;
   double life = 1.0;
+  double time = 0;
   Vector2 _position = Vector2(0, -20);
   Ball({this.isFirstBall = false}) {}
 
@@ -59,8 +60,9 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   void renderCircle(Canvas canvas, Offset center, double radius) {
+    // print(sin(game.currentTime()));
     shader
-      ..setFloat(0, game.currentTime())
+      ..setFloat(0, time)
       ..setFloat(1, radius)
       ..setFloat(2, body.linearVelocity.x)
       ..setFloat(3, body.linearVelocity.y)
@@ -87,6 +89,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   @mustCallSuper
   void update(double dt) {
     super.update(dt);
+    time += dt;
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1), () {
