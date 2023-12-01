@@ -50,7 +50,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final bodyDef = BodyDef(
       userData: this,
-      gravityOverride: isFirstBall ? Vector2(0, 10) : Vector2(0, 1),
+      gravityOverride: isFirstBall ? Vector2(0, 60) : Vector2(0, 1),
       position: _position,
       type: BodyType.dynamic,
     );
