@@ -79,11 +79,27 @@ class Flipper extends BodyComponent with ContactCallbacks {
         end,
         // Paint()..shader = shader,
         Paint()
-          ..color = Color.fromARGB(255, 244, 241, 54)
+          ..color = Color.fromARGB(255, 185, 184, 123)
           ..strokeWidth = RubberThickness
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round,
       );
+
+    canvas.drawArc(
+      Rect.fromCenter(
+        center: start,
+        width: FlipperLength * 2,
+        height: FlipperLength * 2,
+      ),
+      body.angle - pi / 8 * -1,
+      body.angle + pi / 4 * -1,
+      false,
+      Paint()
+        ..color = Color.fromARGB(100, 244, 241, 54)
+        ..strokeWidth = 0.2
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
   }
 
   @override
