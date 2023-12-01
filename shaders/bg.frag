@@ -6,15 +6,15 @@ out vec4 fragColor;
 
 void mainImage(out vec4 O, vec2 I)
 {
-    vec2 percent = (I + iResolution.xy / 2.0) / iResolution.y;
+    vec2 xPercent = (I + iResolution / 2) / iResolution;
     // Draw a sphere in the center of the screen.
-    if (percent.x < 0.5)
+    if (xPercent.x < 0.5)
     {
-        O = vec4(0.5);
+        O = vec4(0.6);
         return;
     }
-    vec3 col = 0.1 * (1 + sin(iTime / 10 + percent.y + vec3(4, 3, 2)));
-    O = vec4(col, 1);
+    vec3 col = 0.1 * (1 + sin(iTime / 10 + xPercent.y + vec3(4, 3, 2)));
+    O = vec4(0.4);
 }
 void main()
 {
