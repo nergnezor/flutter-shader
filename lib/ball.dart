@@ -51,7 +51,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       shape,
       restitution: isFirstBall ? 0.1 : 0.0,
       friction: 0.2,
-      density: 1,
+      density: isFirstBall ? 1 : 10,
     );
 
     final bodyDef = BodyDef(
@@ -117,7 +117,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
   }
 
-  static const explodeForce = 100;
+  // static const explodeForce = 100;
   @override
   void beginContact(Object other, Contact contact) {
 // Calculate impulse (force) on the ball
@@ -130,15 +130,15 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isFirstBall && other is Ball && other.isFirstBall) {
-      final lifeDrain = 10 * force.length / explodeForce;
+      final lifeDrain = force.length / 20;
       life -= lifeDrain.round();
-      grow(lifeDrain / 100);
+      grow(lifeDrain / 10 / life);
     }
 
     // Enemy - Flipper collision
     if (!isFirstBall && other is Flipper) {
-      final lifeDrain = 10 * force.length / explodeForce;
-      first.life -= max(lifeDrain.round(), 1);
+      // final lifeDrain = 10 * force.length;
+      // first.life -= max(lifeDrain.round(), 1);
       // life -= lifeDrain.round();
       // grow(lifeDrain / 100);
     }
@@ -158,7 +158,9 @@ class Ball extends BodyComponent with ContactCallbacks {
 
         return;
       }
+      // Future.delayed(Duration(milliseconds: 1), () {
       world.remove(this);
+      // });
     }
   }
 
