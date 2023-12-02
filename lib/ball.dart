@@ -149,7 +149,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       // grow(lifeDrain / 100);
     }
     if (isFirstBall) {
-      print(other);
+      // print(other);
     }
   }
 
