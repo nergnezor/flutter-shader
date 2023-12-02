@@ -32,7 +32,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
   Future<void> onLoad() async {
     super.onLoad();
     final size = game.camera.visibleWorldRect.size;
-    final y = size.height / 2 * 0.6;
+    final y = size.height / 2 * 0.8;
     var x = size.width / 2 * 0.95;
     if (index == 0) {
       x *= -1;
