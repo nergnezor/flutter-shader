@@ -21,7 +21,13 @@ class Ball extends BodyComponent with ContactCallbacks {
   Ball({this.isFirstBall = false}) {}
 
   void reset() {
+    final oldBody = body;
     body = createBody();
+    // world.remove(oldBody as BodyComponent);
+    // Remove the old body from the world
+    // world.remove(oldBody);
+    // final shape = body.fixtures.first.shape as CircleShape;
+    // shape.radius = radius;
   }
 
   @override
@@ -77,7 +83,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     canvas
       ..drawCircle(
         Offset.zero,
-        radius,
+        max(radius, 1),
         Paint()..shader = shader,
       );
     // Draw a line on the ball to show its direction
@@ -142,6 +148,9 @@ class Ball extends BodyComponent with ContactCallbacks {
       // life -= lifeDrain.round();
       // grow(lifeDrain / 100);
     }
+    if (isFirstBall) {
+      print(other);
+    }
   }
 
   void grow(double amount) {
@@ -174,10 +183,10 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     world.add(text);
     // Remove the text after 2 seconds
+    life = 100;
+    reset();
     Future.delayed(Duration(seconds: 2), () {
       world.remove(text);
-      reset();
-      life = 100;
     });
   }
 }
