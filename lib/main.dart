@@ -19,7 +19,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 80));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 70));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -111,7 +111,7 @@ class MouseJointWorld extends Forge2DWorld
   void update(double dt) {
     super.update(dt);
     time += dt;
-    lifeText.text = (ball.life * 100).round().toString();
+    lifeText.text = ball.life.toString();
 
 // Move the camera up if the ball is at the top of the screen
     final screenYOffset =

@@ -13,7 +13,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   static const EnemyBallDiameter = 6.0;
   late final double radius;
   final bool isFirstBall;
-  double life = 1.0;
+  int life = 100;
   double time = 0;
   Vector2 _position = Vector2(0, -20);
   Ball({this.isFirstBall = false}) {}
@@ -50,7 +50,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final bodyDef = BodyDef(
       userData: this,
-      gravityOverride: isFirstBall ? Vector2(0, 60) : Vector2(0, 1),
+      gravityOverride: isFirstBall ? null : Vector2(0, 1),
       position: _position,
       type: BodyType.dynamic,
     );
@@ -66,7 +66,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(1, radius)
       ..setFloat(2, body.linearVelocity.x)
       ..setFloat(3, body.linearVelocity.y)
-      ..setFloat(4, life);
+      ..setFloat(4, life / 100.0);
 
     canvas
       ..drawCircle(
@@ -76,7 +76,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       );
     // Draw a line on the ball to show its direction
     final lineStart = Offset(0, 0);
-    final lineEnd = Offset(radius * max(life, 0), 0);
+    final lineEnd = Offset(radius * max(life / 100, 0), 0);
     canvas.drawLine(
         lineStart,
         lineEnd,
@@ -94,7 +94,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1), () {
         if (isFirstBall) {
-          life -= 0.1;
+          life -= 10;
           // world.remove(lifeText);
           // world.add(lifeText);
           reset();
@@ -103,13 +103,15 @@ class Ball extends BodyComponent with ContactCallbacks {
         }
       });
     }
-    if (life < 0) {
+    if (life <= 0) {
+      // First spin the ball
+      body.applyAngularImpulse(100);
       body.setActive(false);
       grow(dt * 10);
     }
   }
 
-  static const explodeForce = 1000;
+  static const explodeForce = 100;
   @override
   void beginContact(Object other, Contact contact) {
 // Calculate impulse (force) on the ball
@@ -122,13 +124,9 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isFirstBall && other is Ball && other.isFirstBall) {
-      final lifeDrain = force.length / explodeForce;
-      life -= lifeDrain;
-      grow(lifeDrain);
-      if (life < 0) {
-        // First spin the ball
-        body.applyAngularImpulse(100);
-      }
+      final lifeDrain = 10 * force.length / explodeForce;
+      life -= lifeDrain.round();
+      grow(lifeDrain / 100);
     }
   }
 
