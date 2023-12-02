@@ -13,25 +13,25 @@ void fillLife(out vec4 fragColor, in vec2 fragCoord)
   float fillHeight = life;
   // Vary the fill height based on the time.
   // And also based on the x coordinate.
-  fillHeight += 0.05 * sin(fragCoord.x * 4 + iTime * 4) * sin(iTime * 4);
+  fillHeight += 0.05 * sin(fragCoord.x * 4 + iTime) * sin(iTime * 4);
 
   float y = (fragCoord.y + radius) / (2.0 * radius);
   if (y < fillHeight)
   {
     if (y - fillHeight > -0.01)
-      color = vec4(0.99);
+      color = vec4(0.8);
 
-    const vec4 blue1 = vec4(0.8, 0.2, 0.4, 0.3);
+    const vec4 blue1 = vec4(0.8 - life, 0.5 * life, life, 0.3);
     color += blue1;
   }
 
-  float fillHeight2 = life + 0.06 * sin(fragCoord.x * 3 + iTime * 3) * sin(iTime * 4);
+  float fillHeight2 = life + 0.06 * sin(fragCoord.x * 3 + iTime * 3) * sin(iTime * 5);
   if (y < fillHeight2)
   {
     if (y - fillHeight2 > -0.01)
       color = vec4(0.8);
-    const vec4 blue2 = vec4(0.3, 0.5, 0.5, 0.3);
-    color = mix(color, blue2, life);
+    const vec4 blue2 = vec4(0.8 - life, 0.5 + life / 2, 0.8 * life, 0.3);
+    color = mix(color, blue2, 0.5);
   }
 
   fragColor = color;
