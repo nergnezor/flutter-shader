@@ -5,7 +5,9 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame/text.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'flipper.dart';
 
@@ -32,7 +34,8 @@ class MouseJointWorld extends Forge2DWorld
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
   PositionComponent camera = PositionComponent();
-  TextComponent lifeText = TextComponent(text: "100", position: Vector2(0, 20));
+  TextComponent lifeText =
+      TextComponent(text: "100", position: Vector2(30, 20));
 // Check keyboard input from KeyboardHandler
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keys) {
@@ -60,6 +63,11 @@ class MouseJointWorld extends Forge2DWorld
     add(ball);
     addAll(flippers);
     game.camera.viewport.add(FpsTextComponent());
+    final style = TextStyle(color: Colors.red, fontSize: 24);
+    final regular = TextPaint(style: style);
+
+    game.camera.viewport.add(TextComponent(
+        text: "❤️", position: Vector2(3, 23), textRenderer: regular));
     game.camera.viewport.add(lifeText);
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');

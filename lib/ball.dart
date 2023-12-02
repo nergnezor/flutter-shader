@@ -138,7 +138,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (shape.radius > maxScale) {
       if (isFirstBall) {
         reset();
-        life = 1;
+        life = 100;
         return;
       }
       world.remove(this);
