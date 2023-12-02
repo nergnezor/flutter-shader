@@ -39,7 +39,7 @@ class MouseJointWorld extends Forge2DWorld
   @override
   Future<void> onLoad() async {
     // ..setFloat(0, time)
-    game.camera.viewfinder.visibleGameSize = Vector2.all(20);
+    game.camera.viewfinder.visibleGameSize = Vector2.all(18);
     super.onLoad();
     final boundaries = createBoundaries(game);
     addAll(boundaries);

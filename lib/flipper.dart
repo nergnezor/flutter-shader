@@ -14,7 +14,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
 
   late final Vector2 _position;
   static const FlipperMaxAngle = 52.0;
-  static const FlipperLength = 7.1;
+  static const FlipperLength = 6.1;
   static const RubberThickness = 0.4;
   final speed = 10.0;
   double scale = 1.0;

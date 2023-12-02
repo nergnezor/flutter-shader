@@ -21,7 +21,7 @@ void fillLife(out vec4 fragColor, in vec2 fragCoord)
     if (y - fillHeight > -0.01)
       color = vec4(0.8);
 
-    const vec4 blue1 = vec4(0.8 - life, 0.5 * life, life, 0.3);
+    const vec4 blue1 = vec4(0.6 - life, 0.5 * life, life, 0.5);
     color += blue1;
   }
 
@@ -30,7 +30,7 @@ void fillLife(out vec4 fragColor, in vec2 fragCoord)
   {
     if (y - fillHeight2 > -0.01)
       color = vec4(0.8);
-    const vec4 blue2 = vec4(0.8 - life, 0.5 + life / 2, 0.8 * life, 0.3);
+    const vec4 blue2 = vec4(0.8 - life, 0.5 + life / 2, 0.8 * life, 0.5);
     color = mix(color, blue2, 0.5);
   }
 
@@ -41,9 +41,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
   fillLife(fragColor, fragCoord);
   float center_distance = length(fragCoord) / radius;
-  if (center_distance < 0.95)
+  if (center_distance < 0.99)
     return;
-  fragColor = vec4(0.8);
+  fragColor = vec4(0, 0, 0, 1);
 }
 void main()
 {

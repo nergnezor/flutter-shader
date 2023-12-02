@@ -21,13 +21,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   Ball({this.isFirstBall = false}) {}
 
   void reset() {
-    final oldBody = body;
     body = createBody();
-    // world.remove(oldBody as BodyComponent);
-    // Remove the old body from the world
-    // world.remove(oldBody);
-    // final shape = body.fixtures.first.shape as CircleShape;
-    // shape.radius = radius;
   }
 
   @override
@@ -86,21 +80,21 @@ class Ball extends BodyComponent with ContactCallbacks {
         max(radius, 1),
         Paint()..shader = shader,
       );
-    // Draw a line on the ball to show its direction
-    final lineStart = Offset(0, 0);
-    final lineEnd = Offset(radius * max(life / 100, 0), 0);
-    canvas.drawLine(
-        lineStart,
-        lineEnd,
-        Paint()
-          ..color = Colors.white
-          ..strokeWidth = 0.1);
   }
 
   @override
   @mustCallSuper
   void update(double dt) {
     super.update(dt);
+    if (isFirstBall) {
+      // print(angle);
+      final angleOffset = angle - pi;
+      if (angleOffset.abs() > 0) {
+        body.applyAngularImpulse(
+            -angleOffset * angleOffset.abs() * 5 * (100 - life) / 100);
+      }
+    }
+
     time += dt;
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
 // Add some delay before resetting the ball
