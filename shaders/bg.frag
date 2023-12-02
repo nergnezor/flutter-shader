@@ -9,12 +9,23 @@ void mainImage(out vec4 O, vec2 I)
 {
     vec2 percent = (I + iResolution / 2) / iResolution;
     vec2 centerOffset = percent - vec2(0.5, 0.5);
-    float yDistance = round(iTime);
-    if (yDistance > 40)
-    {
-        yDistance -= 40;
-    }
-    // vec2 target = vec2(0, yDistance);
+    float yDistance = iTime * 5;
+    const float height = iResolution.y;
+    if (yDistance > height)
+        yDistance -= height;
+    if (yDistance > height)
+        yDistance -= height;
+    if (yDistance > height)
+        yDistance -= height;
+    if (yDistance > height)
+        yDistance -= height;
+    if (yDistance > height)
+        yDistance -= height;
+    if (yDistance > height)
+        yDistance -= height;
+    if (yDistance > height)
+        yDistance -= height;
+
     const int numTargets = 5;
     float targetYInterval = iResolution.y / numTargets;
     for (int i = 0; i < numTargets; i++)
