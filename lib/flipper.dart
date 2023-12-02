@@ -91,8 +91,11 @@ class Flipper extends BodyComponent with ContactCallbacks {
         width: FlipperLength * 2,
         height: FlipperLength * 2,
       ),
-      body.angle - pi / 8 * -1,
-      body.angle + pi / 4 * -1,
+      -body.angle -
+          degrees2Radians * FlipperMaxAngle * -0.5 +
+          index * pi +
+          index * -0.12,
+      pi / 4 * -1,
       false,
       Paint()
         ..color = Color.fromARGB(100, 244, 241, 54)

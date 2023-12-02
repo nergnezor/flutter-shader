@@ -17,7 +17,7 @@ void mainImage(out vec4 O, vec2 I)
         return;
     }
     vec3 col = 0.1 * (1 + sin(iTime / 10 + percent.y + vec3(4, 3, 2)));
-    O = vec4(0.4);
+    O = vec4(0.5);
 }
 void main()
 {

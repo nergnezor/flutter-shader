@@ -36,6 +36,7 @@ class MouseJointWorld extends Forge2DWorld
 // Check keyboard input from KeyboardHandler
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keys) {
+    print(event.logicalKey);
     // Check left/right arrow keys
     if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
       flippers[0].activate();
