@@ -13,7 +13,6 @@ import 'flipper.dart';
 
 import 'ball.dart';
 import 'boundaries.dart';
-import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const GameWidget.controlled(gameFactory: MouseJointExample.new));
@@ -48,7 +47,7 @@ class MouseJointWorld extends Forge2DWorld
       flippers[1].activate();
       return true;
     }
-    return false;
+    return true;
   }
 
   @override
@@ -67,7 +66,7 @@ class MouseJointWorld extends Forge2DWorld
     final regular = TextPaint(style: style);
 
     game.camera.viewport.add(TextComponent(
-        text: "❤️", position: Vector2(3, 23), textRenderer: regular));
+        text: "💛", position: Vector2(0, 20), textRenderer: regular));
     game.camera.viewport.add(lifeText);
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
