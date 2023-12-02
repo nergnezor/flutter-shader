@@ -64,26 +64,35 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
   // return;
   // fragColor = vec4(0.3);
   const float eyeRadius = 0.5;
+  const float eyeDistance = eyeRadius * 1.6;
   const float pupilRadius = 0.2;
   const float irisRadius = 0.3;
-  const float eyeDistance = 0.3;
-  const vec2 eyeCenter = vec2(-0.3, 0.3);
-  vec2 eyeCoord = fragCoord - eyeCenter;
-  float eyeDistanceFromCenter = length(eyeCoord);
-  if (eyeDistanceFromCenter < eyeRadius)
+  for (int i = 0; i < 2; i++)
   {
-    if (eyeDistanceFromCenter < pupilRadius)
+    vec2 eyeCenter = vec2(-0.3 + i * eyeDistance, 0.3);
+
+    vec2 eyeCoord = fragCoord - eyeCenter;
+    float eyeDistanceFromCenter = length(eyeCoord);
+    if (eyeDistanceFromCenter < eyeRadius)
     {
-      fragColor = vec4(0, 0, 0, 1);
+      if (eyeDistanceFromCenter > eyeRadius - 0.1)
+      {
+        fragColor *= 0.5;
+        return;
+      }
+      if (eyeDistanceFromCenter < pupilRadius)
+      {
+        fragColor = vec4(0, 0, 0, 1);
+        return;
+      }
+      if (eyeDistanceFromCenter < irisRadius)
+      {
+        fragColor = vec4(0, 0.7, 1, 1);
+        return;
+      }
+      fragColor = vec4(1, 1, 1, 1);
       return;
     }
-    if (eyeDistanceFromCenter < irisRadius)
-    {
-      fragColor = vec4(0, 0.7, 1, 1);
-      return;
-    }
-    fragColor = vec4(1, 1, 1, 1);
-    return;
   }
 }
 void main()
