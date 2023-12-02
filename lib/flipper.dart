@@ -98,7 +98,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
       pi / 4 * -1,
       false,
       Paint()
-        ..color = Color.fromARGB(100, 244, 241, 54)
+        ..color = Color.fromARGB(20, 0, 0, 0)
         ..strokeWidth = 0.2
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round,
@@ -119,31 +119,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
       body.setTransform(body.position, body.angle.clamp(minAngle, maxAngle));
       body.angularVelocity = 0;
     }
-    // if (scale < 1) {
-    //   setScale(1.001);
-    // }
   }
-
-  // @override
-  // void beginContact(Object other, Contact contact) {
-  //   if (other is Ball && other.isFirstBall) return;
-  //   // Decrease the length of the flipper
-  //   setScale(0.9);
-  // }
-
-  // void setScale(double s) {
-  //   scale = scale * s;
-  //   const maxScale = 1.0;
-  //   const minScale = 0.1;
-  //   if (scale > maxScale || scale < minScale) {
-  //     scale = scale.clamp(0.1, 1.0);
-  //     return;
-  //   }
-
-  //   final shape = body.fixtures.first.shape as EdgeShape;
-  //   // final newLength = FlipperLength * scale;
-  //   shape.set(shape.vertex1, shape.vertex2..scale(s));
-  // }
 
   getFlipperShape(int index) {
     final isRight = index == 1;
