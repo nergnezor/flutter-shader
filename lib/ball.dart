@@ -5,6 +5,7 @@ import 'package:flame/effects.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'boundaries.dart';
+import 'flipper.dart';
 
 class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
@@ -13,6 +14,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   static const EnemyBallDiameter = 6.0;
   late final double radius;
   final bool isFirstBall;
+  static late final Ball first;
   int life = 100;
   double time = 0;
   Vector2 _position = Vector2(0, -20);
@@ -34,6 +36,10 @@ class Ball extends BodyComponent with ContactCallbacks {
     _position.y = -game.camera.visibleWorldRect.height / 2 * 0.8;
     _position.x =
         isFirstBall ? -game.camera.visibleWorldRect.width / 2 * 0.8 : 0;
+
+    if (isFirstBall) {
+      first = this;
+    }
   }
 
   @override
@@ -128,6 +134,14 @@ class Ball extends BodyComponent with ContactCallbacks {
       life -= lifeDrain.round();
       grow(lifeDrain / 100);
     }
+
+    // Enemy - Flipper collision
+    if (!isFirstBall && other is Flipper) {
+      final lifeDrain = 10 * force.length / explodeForce;
+      first.life -= max(lifeDrain.round(), 1);
+      // life -= lifeDrain.round();
+      // grow(lifeDrain / 100);
+    }
   }
 
   void grow(double amount) {
@@ -137,11 +151,33 @@ class Ball extends BodyComponent with ContactCallbacks {
     const maxScale = 50;
     if (shape.radius > maxScale) {
       if (isFirstBall) {
-        reset();
-        life = 100;
+        die();
+
         return;
       }
       world.remove(this);
     }
+  }
+
+  void die() {
+    // Display a message
+    final text = TextComponent(
+      text: 'You died!',
+      position: Vector2(0, 0),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+          style: TextStyle(
+        color: Colors.red,
+        fontSize: 4,
+      )),
+    );
+
+    world.add(text);
+    // Remove the text after 2 seconds
+    Future.delayed(Duration(seconds: 2), () {
+      world.remove(text);
+      reset();
+      life = 100;
+    });
   }
 }
