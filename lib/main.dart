@@ -24,7 +24,7 @@ class MouseJointExample extends Forge2DGame {
 }
 
 class MouseJointWorld extends Forge2DWorld
-    with DragCallbacks, HasGameReference<Forge2DGame>, KeyboardHandler {
+    with DragCallbacks, HasGameReference<Forge2DGame> {
   late final FragmentProgram program;
   late final FragmentShader shader;
   double time = 0;
@@ -35,20 +35,6 @@ class MouseJointWorld extends Forge2DWorld
   PositionComponent camera = PositionComponent();
   TextComponent lifeText =
       TextComponent(text: "100", position: Vector2(30, 20));
-// Check keyboard input from KeyboardHandler
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keys) {
-    print(event.logicalKey);
-    // Check left/right arrow keys
-    if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
-      flippers[0].activate();
-      return true;
-    } else if (event.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
-      flippers[1].activate();
-      return true;
-    }
-    return true;
-  }
 
   @override
   Future<void> onLoad() async {
@@ -72,6 +58,9 @@ class MouseJointWorld extends Forge2DWorld
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
 
+    final keyboardDetector =
+        HardwareKeyboardDetector(onKeyEvent: checkKeyEvent);
+    add(keyboardDetector);
     game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
   }
 
@@ -138,6 +127,24 @@ class MouseJointWorld extends Forge2DWorld
       if (game.world.children.length < 10) {
         add(Ball());
       }
+    }
+  }
+
+  void checkKeyEvent(KeyEvent event) {
+    Flipper? flipper;
+    // Check left/right arrow keys
+    if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      flipper = flippers[0];
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      flipper = flippers[1];
+    }
+    if (flipper == null) {
+      return;
+    }
+    if (event is KeyDownEvent) {
+      flipper.activate();
+    } else if (event is KeyUpEvent) {
+      flipper.returnFlipper();
     }
   }
 }
