@@ -37,13 +37,54 @@ void fillLife(out vec4 fragColor, in vec2 fragCoord)
   fragColor = color;
 }
 
+bool drawEye(out vec4 fragColor, in vec2 fragCoord)
+{
+  const float eyeRadius = 0.1;
+  const float eyeDistance = 0.3;
+  const vec2 eyeCenter = vec2(-0.3, 0.3);
+  vec2 eyeCoord = fragCoord - eyeCenter;
+  float eyeDistanceFromCenter = length(eyeCoord);
+  if (eyeDistanceFromCenter < eyeRadius)
+  {
+    fragColor = vec4(0.8);
+    return true;
+  }
+}
+
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
-  fillLife(fragColor, fragCoord);
   float center_distance = length(fragCoord) / radius;
-  if (center_distance < 0.99)
+  if (center_distance > 0.98)
+  {
+    fragColor = vec4(1);
     return;
-  fragColor = vec4(0, 0, 0, 1);
+  }
+  fillLife(fragColor, fragCoord);
+  // if (drawEye(fragColor, fragCoord))
+  // return;
+  // fragColor = vec4(0.3);
+  const float eyeRadius = 0.5;
+  const float pupilRadius = 0.2;
+  const float irisRadius = 0.3;
+  const float eyeDistance = 0.3;
+  const vec2 eyeCenter = vec2(-0.3, 0.3);
+  vec2 eyeCoord = fragCoord - eyeCenter;
+  float eyeDistanceFromCenter = length(eyeCoord);
+  if (eyeDistanceFromCenter < eyeRadius)
+  {
+    if (eyeDistanceFromCenter < pupilRadius)
+    {
+      fragColor = vec4(0, 0, 0, 1);
+      return;
+    }
+    if (eyeDistanceFromCenter < irisRadius)
+    {
+      fragColor = vec4(0, 0.7, 1, 1);
+      return;
+    }
+    fragColor = vec4(1, 1, 1, 1);
+    return;
+  }
 }
 void main()
 {
