@@ -75,9 +75,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     float eyeDistanceFromCenter = length(eyeCoord);
     if (eyeDistanceFromCenter < eyeRadius)
     {
-      if (eyeDistanceFromCenter > eyeRadius - 0.1)
+      if (eyeDistanceFromCenter > eyeRadius - 0.02)
       {
-        fragColor *= 0.5;
+        fragColor *= 0.3;
         return;
       }
       if (eyeDistanceFromCenter < pupilRadius)
