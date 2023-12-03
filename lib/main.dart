@@ -20,7 +20,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 70));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 80));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -35,6 +35,8 @@ class MouseJointWorld extends Forge2DWorld
   PositionComponent camera = PositionComponent();
   TextComponent lifeText =
       TextComponent(text: "100", position: Vector2(30, 20));
+TextComponent debugText =
+      TextComponent(text: "debug", position: Vector2(0, 40));
 
   @override
   Future<void> onLoad() async {
@@ -54,7 +56,7 @@ class MouseJointWorld extends Forge2DWorld
     game.camera.viewport.add(TextComponent(
         text: "💛", position: Vector2(0, 20), textRenderer: regular));
     game.camera.viewport.add(lifeText);
-
+game.camera.viewport.add(debugText);
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
 
@@ -108,6 +110,7 @@ class MouseJointWorld extends Forge2DWorld
     super.update(dt);
     time += dt;
     lifeText.text = ball.life.toString();
+debugText.text = game.world.children.length.toString();
 
 // Move the camera up if the ball is at the top of the screen
     final screenYOffset =
