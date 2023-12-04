@@ -130,15 +130,15 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isFirstBall && other is Ball && other.isFirstBall) {
-      final lifeDrain = 15 * force.length / explodeForce;
+      final lifeDrain = 10 * pow(force.length, 1.2) / explodeForce;
       life -= lifeDrain.round();
       grow(lifeDrain / 100);
     }
 
     // Enemy - Flipper collision
     if (!isFirstBall && other is Flipper) {
-      final lifeDrain = 10 * force.length / explodeForce;
-      first.life -= max(lifeDrain.round(), 1);
+      // final lifeDrain = 10 * force.length / explodeForce;
+      // first.life -= max(lifeDrain.round(), 1);
       // life -= lifeDrain.round();
       // grow(lifeDrain / 100);
     }
