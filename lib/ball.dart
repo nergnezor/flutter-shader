@@ -130,7 +130,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isFirstBall && other is Ball && other.isFirstBall) {
-      final lifeDrain = 10 * force.length / explodeForce;
+      final lifeDrain = 15 * force.length / explodeForce;
       life -= lifeDrain.round();
       grow(lifeDrain / 100);
     }
