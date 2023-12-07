@@ -5,38 +5,57 @@ uniform vec2 iResolution;
 uniform float iTime;
 out vec4 fragColor;
 
-#define SPEED 5
+// Define global variables
+vec2 cameraPosition = vec2(0.0, 0.0);  // Initial camera position
+float horizontalLineThickness = 0.008; // Adjust the thickness of horizontal lines
+float verticalLineThickness = 0.0015;  // Adjust the thickness of vertical lines
+float horizontalLineFrequency = 3.0;   // Adjust the frequency of horizontal lines
+float verticalLineFrequency = 2.0;     // Adjust the frequency of vertical lines
+float distortionFactor = -3.5;         // Adjust the degree of distortion
+float movementSpeed = 3.5;             // Adjust the speed of movement
+float ellipseDegree = 0.36;            // Adjust the degree of elliptical shape
+float brightnessFactor = 1.7;          // Adjust the brightness of the shader
 
-void mainImage(out vec4 O, vec2 I)
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
-    vec2 percent = (I + iResolution / 2) / iResolution;
-    vec2 centerOffset = percent - vec2(0.5, 0.5);
-    const float height = iResolution.y;
-    // float yDistance = mod(iTime * 5, height);
-    float yDistance = iTime * SPEED;
+    // Translate the NDC so that the origin is at the center of the screen and scale x-axis.
+    // vec2 p = (fragCoord - iResolution.xy * 0.5) / min(iResolution.y, iResolution.x);
+    // p.x *= iResolution.x / iResolution.y * ellipseDegree; // to maintain aspect ratio and control elliptical shape.
+    vec2 p = fragCoord / iResolution.y;
+    movementSpeed = (sin(iTime * 0.9) * 1.0 + 2.0) * 0.0025 + 5.0;
 
-    const int numTargets = 5;
-    const int radius = 4;
-    float targetYInterval = iResolution.y / numTargets;
-    for (int i = 0; i < numTargets; i++)
-    {
-        float targetY = i * targetYInterval;
-        // targetY += radius;
+    // Tunnel distortion from the center, reduced as it approaches the camera
+    float distortion = (0.5 - length(p)) * sin(iTime + length(p) * distortionFactor) * 0.05;
+    p += vec2(distortion, distortion / 0.5); // Only distort horizontally
 
-        targetY += yDistance;
-        targetY = mod(targetY, height);
-        targetY -= height / 2;
-        // targetY -= 10;
-        float targetDistance = length(I - vec2(0, targetY));
-        if (targetDistance < radius)
-        {
-            O = vec4(0.6);
-            return;
-        }
-    }
+    vec2 t = vec2(atan(p.x, p.y) / 3.1416, 1.0 / length(p));
+    vec2 s = iTime * vec2(0.0, movementSpeed);
+    vec2 z = vec2(3.0, 1.0);
+    float m = t.y + 0.6;
 
-    O = vec4(0.5);
+    // Generate stripes
+    vec2 texCoord = vec2(mod((t.x - cameraPosition.x) * z.x + s.x, 1.0), mod((t.y - cameraPosition.y) * z.y + s.y, 1.0));
+    float horizontalLine = step(horizontalLineThickness, fract(texCoord.x * horizontalLineFrequency));
+    float perspectiveFactor = 0.2 / (0.2 + t.y); // perspective factor
+    float verticalLine = step(verticalLineThickness, fract(texCoord.y * verticalLineFrequency * perspectiveFactor));
+
+    // Combine horizontal and vertical stripes
+    vec3 stripeColor = vec3(horizontalLine * verticalLine);
+
+    // Set the background color to #CFC67F, stripes color to #BDB474, and add distance fog with color #AD9B45
+    vec3 backgroundColor = vec3(207.0 / 255.0, 100.0 / 255.0, 127.0 / 255.0) * brightnessFactor;
+    vec3 stripeColorFinal = vec3(189.0 / 255.0, 180.0 / 255.0, 116.0 / 255.0) * brightnessFactor;
+    vec3 fogColor = vec3(173.0 / 255.0, 155.0 / 255.0, 69.0 / 255.0) * brightnessFactor;
+
+    // Calculate the distance from the center
+    float distance = length(fragCoord - iResolution.xy * 0.5) / length(iResolution.xy * 0.5);
+
+    // Apply the distance fog effect
+    vec3 finalColor = mix(stripeColorFinal, fogColor, smoothstep(0.0, 1.0, distance));
+
+    fragColor = vec4((finalColor * stripeColor + backgroundColor) / m, 1.0);
 }
+
 void main()
 {
     mainImage(fragColor, FlutterFragCoord().xy);
