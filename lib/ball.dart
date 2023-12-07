@@ -86,14 +86,6 @@ class Ball extends BodyComponent with ContactCallbacks {
   @mustCallSuper
   void update(double dt) {
     super.update(dt);
-    if (isFirstBall) {
-      // print(angle);
-      final angleOffset = angle - pi;
-      if (angleOffset.abs() > 0) {
-        body.applyAngularImpulse(
-            -angleOffset * angleOffset.abs() * 5 * (100 - life) / 100);
-      }
-    }
 
     time += dt;
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
@@ -111,7 +103,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
     if (life <= 0) {
       // First spin the ball
-      body.applyAngularImpulse(100);
+      // body.applyAngularImpulse(100);
       body.setActive(false);
       grow(dt * 10);
     }
