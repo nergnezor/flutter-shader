@@ -127,9 +127,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
   }
 
   reset() {
-    print('reset');
     world.destroyBody(body);
     onLoad();
-    body = createBody();
   }
 }
