@@ -12,9 +12,10 @@ class Flipper extends BodyComponent with ContactCallbacks {
     this.index,
   ) {}
 
-  late final Vector2 _position;
-  static const FlipperMaxAngle = 52.0;
+  late Vector2 _position;
+  static const FlipperMaxAngle = 52.0 * degrees2Radians;
   static const FlipperLength = 6.1;
+  static const FlipperAngle = pi / 6; // 90 + 30 = 120 degrees
   static const RubberThickness = 0.4;
   final speed = 10.0;
   double scale = 1.0;
@@ -32,7 +33,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
   Future<void> onLoad() async {
     super.onLoad();
     final size = game.camera.visibleWorldRect.size;
-    final y = size.height / 2 * 0.8;
+    final y = (size.height / 2 - FlipperLength * sin(FlipperAngle)) * 0.95;
     var x = size.width / 2 * 0.95;
     if (index == 0) {
       x *= -1;
@@ -67,12 +68,6 @@ class Flipper extends BodyComponent with ContactCallbacks {
 
   @override
   void renderEdge(Canvas canvas, Offset start, Offset end) {
-    // shader
-    // ..setFloat(0, time)
-    // ..setFloat(1, radius);
-    // ..setFloat(2, speed.x)
-    // ..setFloat(3, speed.y);
-
     canvas
       ..drawLine(
         start,
@@ -91,10 +86,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
         width: FlipperLength * 2,
         height: FlipperLength * 2,
       ),
-      -body.angle -
-          degrees2Radians * FlipperMaxAngle * -0.5 +
-          index * pi +
-          index * -0.12,
+      -body.angle - FlipperMaxAngle * -0.5 + index * pi + index * -0.12,
       pi / 4 * -1,
       false,
       Paint()
@@ -109,7 +101,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
   void update(double dt) {
     super.update(dt);
 // 60 x 0.8 = 48
-    var maxAngle = degrees2Radians * FlipperMaxAngle;
+    var maxAngle = FlipperMaxAngle;
     var minAngle = 0.0;
     if (index == 0) {
       minAngle = -maxAngle;
@@ -124,14 +116,20 @@ class Flipper extends BodyComponent with ContactCallbacks {
   getFlipperShape(int index) {
     final isRight = index == 1;
     final length = FlipperLength;
-    var angle = pi / 6; // 90 + 30 = 120 degrees
-    var x = length * cos(angle);
+    var x = length * cos(FlipperAngle);
     if (isRight) {
       x = -x;
     }
-    final y = length * sin(angle);
+    final y = length * sin(FlipperAngle);
     final Vector2 start = Vector2.zero();
     final Vector2 end = Vector2(x, y);
     return [start, end];
+  }
+
+  reset() {
+    print('reset');
+    world.destroyBody(body);
+    onLoad();
+    body = createBody();
   }
 }

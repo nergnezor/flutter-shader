@@ -21,6 +21,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   Ball({this.isFirstBall = false}) {}
 
   void reset() {
+    world.destroyBody(body);
     body = createBody();
   }
 

@@ -35,8 +35,16 @@ class MouseJointWorld extends Forge2DWorld
   PositionComponent camera = PositionComponent();
   TextComponent lifeText =
       TextComponent(text: "100", position: Vector2(30, 20));
-TextComponent debugText =
+  TextComponent debugText =
       TextComponent(text: "debug", position: Vector2(0, 40));
+
+  @override
+  void onGameResize(Vector2 gameSize) {
+    // Reset game
+
+    super.onGameResize(gameSize);
+    flippers.forEach((flipper) => flipper.reset());
+  }
 
   @override
   Future<void> onLoad() async {
@@ -56,7 +64,7 @@ TextComponent debugText =
     game.camera.viewport.add(TextComponent(
         text: "💛", position: Vector2(0, 20), textRenderer: regular));
     game.camera.viewport.add(lifeText);
-game.camera.viewport.add(debugText);
+    game.camera.viewport.add(debugText);
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
 
@@ -110,7 +118,7 @@ game.camera.viewport.add(debugText);
     super.update(dt);
     time += dt;
     lifeText.text = ball.life.toString();
-debugText.text = game.world.children.length.toString();
+    debugText.text = game.world.children.length.toString();
 
 // Move the camera up if the ball is at the top of the screen
     final screenYOffset =
