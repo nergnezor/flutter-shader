@@ -3,8 +3,10 @@
 
 uniform vec2 iResolution;
 uniform float iTime;
+uniform float radius;
+uniform vec2 speed;
+uniform float life;
 out vec4 fragColor;
-
 // Define global variables
 vec2 cameraPosition = vec2(0.0, 0.0);  // Initial camera position
 float horizontalLineThickness = 0.008; // Adjust the thickness of horizontal lines
@@ -19,16 +21,18 @@ float brightnessFactor = 1.7;          // Adjust the brightness of the shader
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Translate the NDC so that the origin is at the center of the screen and scale x-axis.
-    // vec2 p = (fragCoord - iResolution.xy * 0.5) / min(iResolution.y, iResolution.x);
-    // p.x *= iResolution.x / iResolution.y * ellipseDegree; // to maintain aspect ratio and control elliptical shape.
-    vec2 p = fragCoord / iResolution.y;
+    // vec2 centerDistance = (fragCoord - iResolution.xy * 0.5) / min(iResolution.y, iResolution.x);
+    // centerDistance.x *= iResolution.x / iResolution.y * ellipseDegree; // to maintain aspect ratio and control elliptical shape.
+    vec2 centerDistance = fragCoord / iResolution.y;
+    // Offset the center to the top of the screen
+    centerDistance.y += 0.2;
     movementSpeed = (sin(iTime * 0.9) * 1.0 + 2.0) * 0.0025 + 5.0;
 
     // Tunnel distortion from the center, reduced as it approaches the camera
-    float distortion = (0.5 - length(p)) * sin(iTime + length(p) * distortionFactor) * 0.05;
-    p += vec2(distortion, distortion / 0.5); // Only distort horizontally
+    float distortion = (0.5 - length(centerDistance)) * sin(iTime + length(centerDistance) * distortionFactor) * 0.05;
+    centerDistance += vec2(distortion, distortion / 0.5); // Only distort horizontally
 
-    vec2 t = vec2(atan(p.x, p.y) / 3.1416, 1.0 / length(p));
+    vec2 t = vec2(atan(centerDistance.x, centerDistance.y) / 3.1416, 1.0 / length(centerDistance));
     vec2 s = iTime * vec2(0.0, movementSpeed);
     vec2 z = vec2(3.0, 1.0);
     float m = t.y + 0.6;
