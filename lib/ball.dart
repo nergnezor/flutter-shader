@@ -11,12 +11,12 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
   static const EnemyBallDiameter = 6.0;
-  late final double radius;
+  double radius = 0.5;
   final bool isFirstBall;
   static late final Ball first;
   int life = 100;
   double time = 0;
-  Vector2 _position = Vector2(0, -20);
+  Vector2 _position = Vector2(0, 0);
   Ball({this.isFirstBall = false}) {}
 
   void reset() {
@@ -28,7 +28,6 @@ class Ball extends BodyComponent with ContactCallbacks {
   Future<void> onLoad() async {
     super.onLoad();
     final shaderName = isFirstBall ? 'player' : 'enemy';
-    radius = isFirstBall ? PinballDiameter / 2 : EnemyBallDiameter / 2;
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
@@ -107,6 +106,19 @@ class Ball extends BodyComponent with ContactCallbacks {
       body.setActive(false);
       grow(dt * 10);
     }
+    const growTime = 10.0;
+    final balltypeRadius =
+        isFirstBall ? PinballDiameter / 2 : EnemyBallDiameter / 2;
+
+    // Always grow enemies. Grow player if within growTime
+    if (!isFirstBall || radius < balltypeRadius) {
+      grow(dt / growTime * balltypeRadius);
+    }
+
+    const explodeRadius = 10.0;
+    if (radius > explodeRadius) {
+      die();
+    }
   }
 
   static const explodeForce = 100;
@@ -143,21 +155,27 @@ class Ball extends BodyComponent with ContactCallbacks {
     final shape = body.fixtures.first.shape as CircleShape;
     final scale = 1 + amount;
     shape.radius = shape.radius * scale;
-    const maxScale = 50;
-    if (shape.radius > maxScale) {
-      if (isFirstBall) {
-        die();
-
-        return;
-      }
-      world.remove(this);
+    if (isFirstBall && radius > PinballDiameter / 2) {
+      radius = PinballDiameter / 2;
+      shape.radius = radius;
     }
+    radius = shape.radius;
   }
 
   void die() {
+    var t;
+    if (isFirstBall) {
+      t = 'You died!';
+      life = 100;
+      reset();
+    } else {
+      t = 'BOOM';
+      world.remove(this);
+    }
+
     // Display a message
     final text = TextComponent(
-      text: 'You died!',
+      text: t,
       position: Vector2(0, 0),
       anchor: Anchor.center,
       textRenderer: TextPaint(
@@ -169,8 +187,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     world.add(text);
     // Remove the text after 2 seconds
-    life = 100;
-    reset();
+
     Future.delayed(Duration(seconds: 2), () {
       world.remove(text);
     });
