@@ -1,3 +1,1 @@
-# shadergame
-
 Flutter + Flame + shaders
